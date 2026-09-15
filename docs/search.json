@@ -11,21 +11,21 @@
     "href": "bio.html",
     "title": "About Me",
     "section": "",
-    "text": "Write a short biography here.\nInclude:"
+    "text": "I am a graduate student in Applied Economics and Data Science at the University of Pennsylvania. I previously studied Economics at New York University, where I developed a strong interest in economics, data analysis, and business strategy. I have experience in market research, financial analysis, and data visualization, with technical skills in Excel, PowerPoint, R, Python, and Tableau. My career goal is to apply data-driven and economic insights to solve real-world business problems and pursue a career in data analytics, economic consulting, or business strategy."
   },
   {
     "objectID": "bio.html#education",
     "href": "bio.html#education",
     "title": "About Me",
     "section": "Education",
-    "text": "Education\nMaster of Applied Economics and Data Science, University of Pennsylvania (expaceted 2027) Batelor of Science, University Name 2026"
+    "text": "Education\nMaster of Applied Economics and Data Science, University of Pennsylvania (expected 2027) Bachelor of Science, New York University 2026"
   },
   {
     "objectID": "bio.html#interests",
     "href": "bio.html#interests",
     "title": "About Me",
     "section": "Interests",
-    "text": "Interests\n\nEconometrics\nMachine Learning\nData Analysis"
+    "text": "Interests\n\nEconomics\nFinance\nData Analysis"
   },
   {
     "objectID": "bio.html#contact",
@@ -51,9 +51,9 @@
   {
     "objectID": "blog/posts/post1/Untitled.html",
     "href": "blog/posts/post1/Untitled.html",
-    "title": "My First Blog Post",
+    "title": "How Can the Same Data Tell Two Different Stories? Understanding Simpson’s Paradox",
     "section": "",
-    "text": "This is my first blog post. Example \\(\\LaTeX\\) equation: \\(\\frac{1}{2}\\sum_{i=1}^nx_i\\)"
+    "text": "Simpson’s Paradox is a statistical phenomenon in which a relationship observed within separate groups can change or even reverse when the groups are combined. This blog explains the intuition behind the paradox using a simple example of two medical treatments. The example shows how differences in the composition of groups can cause aggregate data to tell a very different story from the data within individual groups."
   },
   {
     "objectID": "resume.html",
@@ -75,5 +75,61 @@
     "title": "About",
     "section": "",
     "text": "About this site\n\n1 + 1\n\n[1] 2"
+  },
+  {
+    "objectID": "blog/posts/post1/Untitled.html#abstract",
+    "href": "blog/posts/post1/Untitled.html#abstract",
+    "title": "How Can the Same Data Tell Two Different Stories? Understanding Simpson’s Paradox",
+    "section": "",
+    "text": "Simpson’s Paradox is a statistical phenomenon in which a relationship observed within separate groups can change or even reverse when the groups are combined. This blog explains the intuition behind the paradox using a simple example of two medical treatments. The example shows how differences in the composition of groups can cause aggregate data to tell a very different story from the data within individual groups."
+  },
+  {
+    "objectID": "blog/posts/post1/Untitled.html#introduction",
+    "href": "blog/posts/post1/Untitled.html#introduction",
+    "title": "How Can the Same Data Tell Two Different Stories? Understanding Simpson’s Paradox",
+    "section": "Introduction",
+    "text": "Introduction\nWhen we look at data, we often expect the numbers to give us a clear answer. If Treatment A has a higher success rate than Treatment B for different groups of patients, it seems reasonable to conclude that Treatment A is better. However, this conclusion can change when we combine the groups together.\nThis surprising situation is called Simpson’s Paradox. Simpson’s Paradox occurs when a relationship appears in several separate groups but changes or even reverses when the groups are combined. The mathematics behind it is not necessarily difficult. What makes the paradox unintuitive is that the way we group the data can change the conclusion we draw from it."
+  },
+  {
+    "objectID": "blog/posts/post1/Untitled.html#a-simple-example",
+    "href": "blog/posts/post1/Untitled.html#a-simple-example",
+    "title": "How Can the Same Data Tell Two Different Stories? Understanding Simpson’s Paradox",
+    "section": "A Simple Example",
+    "text": "A Simple Example\nSuppose a hospital is comparing two treatments, Treatment A and Treatment B. Patients can be divided into two groups: mild cases and severe cases.\nFor mild cases, suppose Treatment A has a success rate of \\(90%\\), while Treatment B has a success rate of \\(80%\\). Therefore, Treatment A performs better:\n\\[\n90\\% &gt; 80\\%.\n\\]\nFor severe cases, suppose Treatment A has a success rate of \\(30%\\), while Treatment B has a success rate of \\(20%\\). Again, Treatment A performs better:\n\\[\n30\\% &gt; 20\\%.\n\\]\nAt this point, it seems obvious that Treatment A is the better treatment.\nHowever, suppose the number of patients receiving each treatment is very different. Treatment A is used mostly for severe cases, while Treatment B is used mostly for mild cases.\nFor Treatment A, suppose there are 100 mild cases and 900 severe cases. Its overall success rate is\n\\[\n\\frac{100(0.90)+900(0.30)}{1000}\n=0.36\n=36\\%.\n\\]\nFor Treatment B, suppose there are 900 mild cases and 100 severe cases. Its overall success rate is\n\\[\n\\frac{900(0.80)+100(0.20)}{1000}\n=0.74\n=74\\%.\n\\]\nNow we get a surprising result. Treatment A performs better in both patient groups, but Treatment B has the higher overall success rate:\n\\[\n36\\% &lt; 74\\%.\n\\]\nThis is the key feature of Simpson’s Paradox."
+  },
+  {
+    "objectID": "blog/posts/post1/Untitled.html#why-does-this-happen",
+    "href": "blog/posts/post1/Untitled.html#why-does-this-happen",
+    "title": "How Can the Same Data Tell Two Different Stories? Understanding Simpson’s Paradox",
+    "section": "Why Does This Happen?",
+    "text": "Why Does This Happen?\nThe key is that the two treatments have different proportions of mild and severe patients.\nMild patients are easier to treat, so having more mild patients naturally increases a treatment’s overall success rate. Treatment B has mostly mild patients, while Treatment A has mostly severe patients.\nTherefore, the overall success rates are not simply comparing the quality of the two treatments. They are also reflecting the different compositions of the patient groups.\nIn other words, the overall success rate is a weighted average of the success rates in the different groups. The weights are determined by how many patients belong to each group.\nFor Treatment A, the calculation is\n\\[\n0.10(90\\%) + 0.90(30\\%) = 36\\%.\n\\]\nFor Treatment B, the calculation is\n\\[\n0.90(80\\%) + 0.10(20\\%) = 74\\%.\n\\]\nThese calculations show why the overall comparison can be different from the comparisons within each group.\nThis is the main intuition behind Simpson’s Paradox: an aggregate result can hide what is happening inside individual groups."
+  },
+  {
+    "objectID": "blog/posts/post1/Untitled.html#visualizing-the-paradox",
+    "href": "blog/posts/post1/Untitled.html#visualizing-the-paradox",
+    "title": "How Can the Same Data Tell Two Different Stories? Understanding Simpson’s Paradox",
+    "section": "Visualizing the Paradox",
+    "text": "Visualizing the Paradox\nWe can visualize the success rates of the two treatments. Figure Figure 1 shows the success rates for mild cases, severe cases, and the overall population.\n\n\n\n\n\n\nFigure 1: Success Rates for Treatments A and B\n\n\n\nThe figure shows the paradox clearly. Within both the mild and severe groups, Treatment A has a higher success rate than Treatment B. However, when we look at the overall data, Treatment B has a much higher success rate."
+  },
+  {
+    "objectID": "blog/posts/post1/Untitled.html#why-should-we-care",
+    "href": "blog/posts/post1/Untitled.html#why-should-we-care",
+    "title": "How Can the Same Data Tell Two Different Stories? Understanding Simpson’s Paradox",
+    "section": "Why Should We Care?",
+    "text": "Why Should We Care?\nSimpson’s Paradox is important because aggregate statistics are common in economics, business, medicine, and many other fields. Looking only at an overall average can sometimes lead to a misleading conclusion.\nFor example, when comparing two policies, companies, schools, or economic outcomes, we should consider whether important groups have different characteristics. A difference in the overall data may partly reflect differences in the composition of the groups rather than a true difference in performance.\nThis does not mean that aggregate statistics are always wrong. Instead, it means that we should understand what is behind an aggregate number before using it to make a conclusion."
+  },
+  {
+    "objectID": "blog/posts/post1/Untitled.html#conclusion",
+    "href": "blog/posts/post1/Untitled.html#conclusion",
+    "title": "How Can the Same Data Tell Two Different Stories? Understanding Simpson’s Paradox",
+    "section": "Conclusion",
+    "text": "Conclusion\nSimpson’s Paradox shows that the same data can tell different stories depending on how we group it. A result that appears true in the aggregate may disappear or even reverse when we examine smaller groups.\nThe important lesson is simple: before drawing conclusions from aggregate data, we should look inside the groups that make up that data."
+  },
+  {
+    "objectID": "bio.html#elenalisas.upenn.edu",
+    "href": "bio.html#elenalisas.upenn.edu",
+    "title": "About Me",
+    "section": "elenali@sas.upenn.edu",
+    "text": "elenali@sas.upenn.edu"
   }
 ]

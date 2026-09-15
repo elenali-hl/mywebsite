@@ -2,27 +2,21 @@
 title: "About Me"
 ---
 
-Write a short biography here.
+I am a graduate student in Applied Economics and Data Science at the University of Pennsylvania. I previously studied Economics at New York University, where I developed a strong interest in economics, data analysis, and business strategy. I have experience in market research, financial analysis, and data visualization, with technical skills in Excel, PowerPoint, R, Python, and Tableau. My career goal is to apply data-driven and economic insights to solve real-world business problems and pursue a career in data analytics, economic consulting, or business strategy.
 
-Include:
-
--   Educational background
--   Professional interests
--   Technical skills
--   Career goals
 
 ## Education
 
-Master of Applied Economics and Data Science, University of Pennsylvania (expaceted 2027) Batelor of Science, University Name 2026
+Master of Applied Economics and Data Science, University of Pennsylvania (expected 2027) Bachelor of Science, New York University 2026
 
 ## Interests
 
--   Econometrics
--   Machine Learning
+-   Economics
+-   Finance
 -   Data Analysis
 
 ## Contact
 
-## student\@email.edu
+## elenali@sas.upenn.edu
 
 ------------------------------------------------------------------------

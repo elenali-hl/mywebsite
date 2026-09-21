@@ -1,9 +1,288 @@
 ---
-title: "My Second Blog Post"
-date: 2026-06-16
+title: "Finding the Best-Value Book Categories"
+date: 2026-09-21
 categories:
-  - opinion
-  - labor market
+  - web scraping
+  - data analysis
 ---
 
 ## This is my second blog post.
+
+# ============================================================
+# 1. Load Packages
+# ============================================================
+
+library(rvest)
+library(dplyr)
+library(readr)
+
+
+# ============================================================
+# 2. Read the Website
+# ============================================================
+
+# Main page of Books to Scrape
+base_url <- "https://books.toscrape.com/"
+
+page <- read_html(base_url)
+
+
+# ============================================================
+# 3. Get Book Categories and Their Links
+# ============================================================
+
+# Extract category names
+category_names <- page %>%
+  html_elements(".side_categories ul li ul li a") %>%
+  html_text2()
+
+# Extract category links
+category_links <- page %>%
+  html_elements(".side_categories ul li ul li a") %>%
+  html_attr("href")
+
+# Combine category names and links into a data frame
+categories <- data.frame(
+  category = category_names,
+  link = category_links
+)
+
+# Check the category data
+head(categories)
+nrow(categories)
+
+
+# ============================================================
+# 4. Create a Function to Scrape Each Category
+# ============================================================
+
+scrape_category <- function(category_name, category_link) {
+  
+  # Create the URL for the first page of the category
+  current_url <- paste0(
+    base_url,
+    category_link
+  )
+  
+  # Create an empty data frame to store results
+  all_books <- data.frame()
+  
+  repeat {
+    
+    # Read the current page
+    category_page <- read_html(current_url)
+    
+    # Find all books on the current page
+    books <- category_page %>%
+      html_elements(".product_pod")
+    
+    # Extract book information
+    page_data <- data.frame(
+      
+      title = books %>%
+        html_element("h3 a") %>%
+        html_attr("title"),
+      
+      price = books %>%
+        html_element(".price_color") %>%
+        html_text2(),
+      
+      rating = books %>%
+        html_element(".star-rating") %>%
+        html_attr("class"),
+      
+      category = category_name
+    )
+    
+    # Add the current page to the accumulated results
+    all_books <- bind_rows(
+      all_books,
+      page_data
+    )
+    
+    # Look for a link to the next page
+    next_link <- category_page %>%
+      html_element("li.next a") %>%
+      html_attr("href")
+    
+    # Stop if there is no next page
+    if (is.na(next_link)) {
+      break
+    }
+    
+    # Convert the relative next-page link to an absolute URL
+    current_url <- url_absolute(
+      next_link,
+      current_url
+    )
+    
+    # Pause briefly between requests
+    Sys.sleep(0.5)
+  }
+  
+  return(all_books)
+}
+
+
+# ============================================================
+# 5. Scrape All Categories
+# ============================================================
+
+# Create an empty data frame for all books
+books_all <- data.frame()
+
+for (i in 1:nrow(categories)) {
+  
+  # Scrape one category
+  category_data <- scrape_category(
+    categories$category[i],
+    categories$link[i]
+  )
+  
+  # Add it to the complete dataset
+  books_all <- bind_rows(
+    books_all,
+    category_data
+  )
+  
+  # Display progress
+  print(
+    paste(
+      "Finished:",
+      categories$category[i]
+    )
+  )
+  
+  # Pause briefly between categories
+  Sys.sleep(0.5)
+}
+
+
+# ============================================================
+# 6. Check the Scraped Data
+# ============================================================
+
+# Number of books collected
+nrow(books_all)
+
+# Preview the data
+head(books_all)
+
+# Number of books in each category
+table(books_all$category)
+
+# Check for duplicated titles
+sum(duplicated(books_all$title))
+
+
+# ============================================================
+# 7. Clean the Data
+# ============================================================
+
+books_clean <- books_all %>%
+  mutate(
+    
+    # Convert price from text such as "£45.17" to 45.17
+    price = parse_number(price),
+    
+    # Convert star ratings from text to numbers
+    rating = case_when(
+      rating == "star-rating One" ~ 1,
+      rating == "star-rating Two" ~ 2,
+      rating == "star-rating Three" ~ 3,
+      rating == "star-rating Four" ~ 4,
+      rating == "star-rating Five" ~ 5,
+      TRUE ~ NA_real_
+    )
+  )
+
+
+# ============================================================
+# 8. Check the Cleaned Data
+# ============================================================
+
+# Preview cleaned data
+head(books_clean)
+
+# Check variable types
+str(books_clean)
+
+# Check for missing values
+colSums(is.na(books_clean))
+
+# Summary statistics
+summary(books_clean)
+
+
+# ============================================================
+# 9. Summarize Books by Category
+# ============================================================
+
+category_summary <- books_clean %>%
+  group_by(category) %>%
+  summarise(
+    number_of_books = n(),
+    average_price = mean(price, na.rm = TRUE),
+    median_price = median(price, na.rm = TRUE),
+    average_rating = mean(rating, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+
+# ============================================================
+# 10. Explore Category-Level Results
+# ============================================================
+
+# Categories with the lowest average prices
+lowest_price_categories <- category_summary %>%
+  arrange(average_price) %>%
+  select(
+    category,
+    number_of_books,
+    average_price,
+    median_price,
+    average_rating
+  ) %>%
+  slice_head(n = 10)
+
+lowest_price_categories
+
+
+# Categories with the highest average ratings
+highest_rating_categories <- category_summary %>%
+  arrange(desc(average_rating)) %>%
+  select(
+    category,
+    number_of_books,
+    average_price,
+    median_price,
+    average_rating
+  ) %>%
+  slice_head(n = 10)
+
+highest_rating_categories
+
+################################Analysis
+reliable_categories <- category_summary %>%
+  filter(number_of_books >= 10)
+reliable_categories
+
+overall_avg_price <- mean(books_clean$price, na.rm = TRUE)
+overall_avg_rating <- mean(books_clean$rating, na.rm = TRUE)
+overall_avg_price
+overall_avg_rating
+
+best_value_categories <- reliable_categories %>%
+  filter(
+    average_price < overall_avg_price,
+    average_rating > overall_avg_rating
+  ) %>%
+  arrange(desc(average_rating))
+
+best_value_categories
+
+
+nrow(reliable_categories)
+overall_avg_price
+overall_avg_rating
+best_value_categories

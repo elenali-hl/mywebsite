@@ -5,284 +5,113 @@ categories:
   - web scraping
   - data analysis
 ---
+## Finding a Good Read Without Overspending
 
-## This is my second blog post.
+When choosing a book, price and reader ratings are often two useful pieces of information to consider. A highly rated book may seem appealing, but is it worth the price? On the other hand, the cheapest option may not necessarily provide the best reading experience.
 
-# ============================================================
-# 1. Load Packages
-# ============================================================
+This led me to a simple question:
 
-library(rvest)
-library(dplyr)
-library(readr)
+> **Which book categories offer relatively highly rated books at lower prices?**
 
+To explore this question, I used web scraping to collect book information and compared prices and ratings across different categories.
 
-# ============================================================
-# 2. Read the Website
-# ============================================================
+## Collecting the Data
 
-# Main page of Books to Scrape
-base_url <- "https://books.toscrape.com/"
+For this analysis, I scraped data from [Books to Scrape](https://books.toscrape.com/), a website specifically designed for practicing web scraping.
 
-page <- read_html(base_url)
+Using the `rvest` package in R, I collected four pieces of information for each book:
 
+- title
+- category
+- price
+- star rating
 
-# ============================================================
-# 3. Get Book Categories and Their Links
-# ============================================================
+Because the books are spread across multiple category pages, the scraping process also followed pagination links until all available books in each category were collected. I included short pauses between requests to avoid sending requests to the website too frequently.
 
-# Extract category names
-category_names <- page %>%
-  html_elements(".side_categories ul li ul li a") %>%
-  html_text2()
+After scraping the data, I converted prices from text into numeric values and transformed the star-rating labels into a numeric scale from 1 to 5.
 
-# Extract category links
-category_links <- page %>%
-  html_elements(".side_categories ul li ul li a") %>%
-  html_attr("href")
+## Comparing Book Categories
 
-# Combine category names and links into a data frame
-categories <- data.frame(
-  category = category_names,
-  link = category_links
-)
+Since my research question focuses on categories rather than individual books, I summarized the data at the category level.
 
-# Check the category data
-head(categories)
-nrow(categories)
+For each category, I calculated:
 
+- the number of books
+- average price
+- median price
+- average rating
 
-# ============================================================
-# 4. Create a Function to Scrape Each Category
-# ============================================================
+One challenge was that category sizes varied substantially. Some categories contained only one or a few books, while the median category contained about 10 books. An average based on only one book could give a misleading impression of an entire category.
 
-scrape_category <- function(category_name, category_link) {
-  
-  # Create the URL for the first page of the category
-  current_url <- paste0(
-    base_url,
-    category_link
-  )
-  
-  # Create an empty data frame to store results
-  all_books <- data.frame()
-  
-  repeat {
-    
-    # Read the current page
-    category_page <- read_html(current_url)
-    
-    # Find all books on the current page
-    books <- category_page %>%
-      html_elements(".product_pod")
-    
-    # Extract book information
-    page_data <- data.frame(
-      
-      title = books %>%
-        html_element("h3 a") %>%
-        html_attr("title"),
-      
-      price = books %>%
-        html_element(".price_color") %>%
-        html_text2(),
-      
-      rating = books %>%
-        html_element(".star-rating") %>%
-        html_attr("class"),
-      
-      category = category_name
-    )
-    
-    # Add the current page to the accumulated results
-    all_books <- bind_rows(
-      all_books,
-      page_data
-    )
-    
-    # Look for a link to the next page
-    next_link <- category_page %>%
-      html_element("li.next a") %>%
-      html_attr("href")
-    
-    # Stop if there is no next page
-    if (is.na(next_link)) {
-      break
-    }
-    
-    # Convert the relative next-page link to an absolute URL
-    current_url <- url_absolute(
-      next_link,
-      current_url
-    )
-    
-    # Pause briefly between requests
-    Sys.sleep(0.5)
-  }
-  
-  return(all_books)
-}
+For the main comparison, I therefore focused on categories containing **at least 10 books**. This left 25 categories for analysis.
 
+## What Counts as "Good Value"?
 
-# ============================================================
-# 5. Scrape All Categories
-# ============================================================
+Rather than creating an arbitrary score such as rating divided by price, I used two simple benchmarks: the overall average book price and the overall average book rating.
 
-# Create an empty data frame for all books
-books_all <- data.frame()
+I classified a category as meeting the **good-value criteria** when:
 
-for (i in 1:nrow(categories)) {
-  
-  # Scrape one category
-  category_data <- scrape_category(
-    categories$category[i],
-    categories$link[i]
-  )
-  
-  # Add it to the complete dataset
-  books_all <- bind_rows(
-    books_all,
-    category_data
-  )
-  
-  # Display progress
-  print(
-    paste(
-      "Finished:",
-      categories$category[i]
-    )
-  )
-  
-  # Pause briefly between categories
-  Sys.sleep(0.5)
-}
+1. its average price was below the overall average book price, and
+2. its average rating was above the overall average book rating.
 
+This definition makes the tradeoff easy to interpret: I am looking for categories that are relatively less expensive while still receiving relatively stronger ratings.
 
-# ============================================================
-# 6. Check the Scraped Data
-# ============================================================
+## Price vs. Rating
 
-# Number of books collected
-nrow(books_all)
+The figure below compares average price and average rating across the 25 categories included in the analysis.
 
-# Preview the data
-head(books_all)
+![](blog2_figure.png)
 
-# Number of books in each category
-table(books_all$category)
+Each point represents one book category, and the size of the point reflects the number of books in that category. The vertical dashed line represents the overall average price, while the horizontal dashed line represents the overall average rating.
 
-# Check for duplicated titles
-sum(duplicated(books_all$title))
+The area in the **upper-left** of the figure is especially interesting. Categories in this region have both lower-than-average prices and higher-than-average ratings, meaning they satisfy both of my good-value criteria.
 
+## Which Categories Stand Out?
 
-# ============================================================
-# 7. Clean the Data
-# ============================================================
+Five categories met both criteria:
 
-books_clean <- books_all %>%
-  mutate(
-    
-    # Convert price from text such as "£45.17" to 45.17
-    price = parse_number(price),
-    
-    # Convert star ratings from text to numbers
-    rating = case_when(
-      rating == "star-rating One" ~ 1,
-      rating == "star-rating Two" ~ 2,
-      rating == "star-rating Three" ~ 3,
-      rating == "star-rating Four" ~ 4,
-      rating == "star-rating Five" ~ 5,
-      TRUE ~ NA_real_
-    )
-  )
+| Category | Number of Books | Average Price (£) | Average Rating |
+|---|---:|---:|---:|
+| Humor | 10 | 33.5 | 3.40 |
+| Historical Fiction | 26 | 33.6 | 3.23 |
+| Sequential Art | 75 | 34.6 | 2.97 |
+| Mystery | 32 | 31.7 | 2.94 |
+| Science | 14 | 33.1 | 2.93 |
 
+The results reveal several different ways a category can provide value.
 
-# ============================================================
-# 8. Check the Cleaned Data
-# ============================================================
+**Humor** has the highest average rating among the five categories, at 3.40 stars, while still maintaining a below-average price.
 
-# Preview cleaned data
-head(books_clean)
+**Historical Fiction** also combines a relatively strong average rating of 3.23 with a below-average price. With 26 books in the category, its result is also based on a larger selection than Humor.
 
-# Check variable types
-str(books_clean)
+**Mystery**, meanwhile, has the lowest average price among the five categories at approximately £31.70. For readers who place greater emphasis on price, it therefore represents a particularly affordable option among the categories meeting both criteria.
 
-# Check for missing values
-colSums(is.na(books_clean))
+Sequential Art and Science also fall within the good-value region, although their average ratings are closer to the overall rating benchmark.
 
-# Summary statistics
-summary(books_clean)
+## What Should a Budget-Conscious Reader Do?
 
+The analysis suggests that readers do not necessarily have to choose between lower prices and stronger ratings.
 
-# ============================================================
-# 9. Summarize Books by Category
-# ============================================================
+For readers who prioritize ratings, **Humor** may be worth exploring first because it has the highest average rating among the categories meeting the good-value criteria. **Historical Fiction** also offers a combination of relatively strong ratings and below-average prices across a larger number of books.
 
-category_summary <- books_clean %>%
-  group_by(category) %>%
-  summarise(
-    number_of_books = n(),
-    average_price = mean(price, na.rm = TRUE),
-    median_price = median(price, na.rm = TRUE),
-    average_rating = mean(rating, na.rm = TRUE),
-    .groups = "drop"
-  )
+For readers who are particularly price-sensitive, **Mystery** may be worth exploring because it has the lowest average price among the five categories.
 
+More broadly, the analysis shows why considering price and rating together can be more informative than simply searching for either the cheapest or the highest-rated category.
 
-# ============================================================
-# 10. Explore Category-Level Results
-# ============================================================
+## Limitations
 
-# Categories with the lowest average prices
-lowest_price_categories <- category_summary %>%
-  arrange(average_price) %>%
-  select(
-    category,
-    number_of_books,
-    average_price,
-    median_price,
-    average_rating
-  ) %>%
-  slice_head(n = 10)
+There are several limitations to keep in mind.
 
-lowest_price_categories
+First, Books to Scrape is a website designed for web-scraping practice rather than a live bookstore. Therefore, the results should be interpreted as an illustration of how web-scraped data can support a purchasing decision rather than as current recommendations for the real book market.
 
+Second, star ratings provide only a simple measure of book quality. They do not capture individual preferences, written reviews, popularity, or other factors that may influence whether a reader enjoys a book.
 
-# Categories with the highest average ratings
-highest_rating_categories <- category_summary %>%
-  arrange(desc(average_rating)) %>%
-  select(
-    category,
-    number_of_books,
-    average_price,
-    median_price,
-    average_rating
-  ) %>%
-  slice_head(n = 10)
+Finally, category sizes vary considerably. Although I limited the main analysis to categories with at least 10 books, averages can still be influenced by the composition and number of books within each category.
 
-highest_rating_categories
+## Conclusion
 
-################################Analysis
-reliable_categories <- category_summary %>%
-  filter(number_of_books >= 10)
-reliable_categories
+By combining web scraping with a simple price-and-rating comparison, I identified five book categories that have both below-average prices and above-average ratings: **Humor, Historical Fiction, Sequential Art, Mystery, and Science**.
 
-overall_avg_price <- mean(books_clean$price, na.rm = TRUE)
-overall_avg_rating <- mean(books_clean$rating, na.rm = TRUE)
-overall_avg_price
-overall_avg_rating
+The results also show that "value" depends on what a reader cares about most. Humor stands out for its relatively high average rating, while Mystery stands out for its relatively low average price.
 
-best_value_categories <- reliable_categories %>%
-  filter(
-    average_price < overall_avg_price,
-    average_rating > overall_avg_rating
-  ) %>%
-  arrange(desc(average_rating))
-
-best_value_categories
-
-
-nrow(reliable_categories)
-overall_avg_price
-overall_avg_rating
-best_value_categories
+More importantly, this project demonstrates how information collected from the web can be transformed into a practical decision-making tool. Instead of looking at price or ratings separately, combining the two provides a clearer way to narrow down the available choices.

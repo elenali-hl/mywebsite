@@ -131,5 +131,75 @@
     "title": "About Me",
     "section": "elenali@sas.upenn.edu",
     "text": "elenali@sas.upenn.edu"
+  },
+  {
+    "objectID": "blog/posts/post2/index.html#finding-a-good-read-without-overspending",
+    "href": "blog/posts/post2/index.html#finding-a-good-read-without-overspending",
+    "title": "Finding the Best-Value Book Categories",
+    "section": "",
+    "text": "When choosing a book, price and reader ratings are often two useful pieces of information to consider. A highly rated book may seem appealing, but is it worth the price? On the other hand, the cheapest option may not necessarily provide the best reading experience.\nThis led me to a simple question:\n\nWhich book categories offer relatively highly rated books at lower prices?\n\nTo explore this question, I used web scraping to collect book information and compared prices and ratings across different categories."
+  },
+  {
+    "objectID": "blog/posts/post2/index.html#collecting-the-data",
+    "href": "blog/posts/post2/index.html#collecting-the-data",
+    "title": "Finding the Best-Value Book Categories",
+    "section": "Collecting the Data",
+    "text": "Collecting the Data\nFor this analysis, I scraped data from Books to Scrape, a website specifically designed for practicing web scraping.\nUsing the rvest package in R, I collected four pieces of information for each book:\n\ntitle\ncategory\nprice\nstar rating\n\nBecause the books are spread across multiple category pages, the scraping process also followed pagination links until all available books in each category were collected. I included short pauses between requests to avoid sending requests to the website too frequently.\nAfter scraping the data, I converted prices from text into numeric values and transformed the star-rating labels into a numeric scale from 1 to 5."
+  },
+  {
+    "objectID": "blog/posts/post2/index.html#comparing-book-categories",
+    "href": "blog/posts/post2/index.html#comparing-book-categories",
+    "title": "Finding the Best-Value Book Categories",
+    "section": "Comparing Book Categories",
+    "text": "Comparing Book Categories\nSince my research question focuses on categories rather than individual books, I summarized the data at the category level.\nFor each category, I calculated:\n\nthe number of books\naverage price\nmedian price\naverage rating\n\nOne challenge was that category sizes varied substantially. Some categories contained only one or a few books, while the median category contained about 10 books. An average based on only one book could give a misleading impression of an entire category.\nFor the main comparison, I therefore focused on categories containing at least 10 books. This left 25 categories for analysis."
+  },
+  {
+    "objectID": "blog/posts/post2/index.html#what-counts-as-good-value",
+    "href": "blog/posts/post2/index.html#what-counts-as-good-value",
+    "title": "Finding the Best-Value Book Categories",
+    "section": "What Counts as “Good Value”?",
+    "text": "What Counts as “Good Value”?\nRather than creating an arbitrary score such as rating divided by price, I used two simple benchmarks: the overall average book price and the overall average book rating.\nI classified a category as meeting the good-value criteria when:\n\nits average price was below the overall average book price, and\nits average rating was above the overall average book rating.\n\nThis definition makes the tradeoff easy to interpret: I am looking for categories that are relatively less expensive while still receiving relatively stronger ratings."
+  },
+  {
+    "objectID": "blog/posts/post2/index.html#price-vs.-rating",
+    "href": "blog/posts/post2/index.html#price-vs.-rating",
+    "title": "Finding the Best-Value Book Categories",
+    "section": "Price vs. Rating",
+    "text": "Price vs. Rating\nThe figure below compares average price and average rating across the 25 categories included in the analysis.\n\nEach point represents one book category, and the size of the point reflects the number of books in that category. The vertical dashed line represents the overall average price, while the horizontal dashed line represents the overall average rating.\nThe area in the upper-left of the figure is especially interesting. Categories in this region have both lower-than-average prices and higher-than-average ratings, meaning they satisfy both of my good-value criteria."
+  },
+  {
+    "objectID": "blog/posts/post2/index.html#which-categories-stand-out",
+    "href": "blog/posts/post2/index.html#which-categories-stand-out",
+    "title": "Finding the Best-Value Book Categories",
+    "section": "Which Categories Stand Out?",
+    "text": "Which Categories Stand Out?\nFive categories met both criteria:\n\n\n\nCategory\nNumber of Books\nAverage Price (£)\nAverage Rating\n\n\n\n\nHumor\n10\n33.5\n3.40\n\n\nHistorical Fiction\n26\n33.6\n3.23\n\n\nSequential Art\n75\n34.6\n2.97\n\n\nMystery\n32\n31.7\n2.94\n\n\nScience\n14\n33.1\n2.93\n\n\n\nThe results reveal several different ways a category can provide value.\nHumor has the highest average rating among the five categories, at 3.40 stars, while still maintaining a below-average price.\nHistorical Fiction also combines a relatively strong average rating of 3.23 with a below-average price. With 26 books in the category, its result is also based on a larger selection than Humor.\nMystery, meanwhile, has the lowest average price among the five categories at approximately £31.70. For readers who place greater emphasis on price, it therefore represents a particularly affordable option among the categories meeting both criteria.\nSequential Art and Science also fall within the good-value region, although their average ratings are closer to the overall rating benchmark."
+  },
+  {
+    "objectID": "blog/posts/post2/index.html#what-should-a-budget-conscious-reader-do",
+    "href": "blog/posts/post2/index.html#what-should-a-budget-conscious-reader-do",
+    "title": "Finding the Best-Value Book Categories",
+    "section": "What Should a Budget-Conscious Reader Do?",
+    "text": "What Should a Budget-Conscious Reader Do?\nThe analysis suggests that readers do not necessarily have to choose between lower prices and stronger ratings.\nFor readers who prioritize ratings, Humor may be worth exploring first because it has the highest average rating among the categories meeting the good-value criteria. Historical Fiction also offers a combination of relatively strong ratings and below-average prices across a larger number of books.\nFor readers who are particularly price-sensitive, Mystery may be worth exploring because it has the lowest average price among the five categories.\nMore broadly, the analysis shows why considering price and rating together can be more informative than simply searching for either the cheapest or the highest-rated category."
+  },
+  {
+    "objectID": "blog/posts/post2/index.html#limitations",
+    "href": "blog/posts/post2/index.html#limitations",
+    "title": "Finding the Best-Value Book Categories",
+    "section": "Limitations",
+    "text": "Limitations\nThere are several limitations to keep in mind.\nFirst, Books to Scrape is a website designed for web-scraping practice rather than a live bookstore. Therefore, the results should be interpreted as an illustration of how web-scraped data can support a purchasing decision rather than as current recommendations for the real book market.\nSecond, star ratings provide only a simple measure of book quality. They do not capture individual preferences, written reviews, popularity, or other factors that may influence whether a reader enjoys a book.\nFinally, category sizes vary considerably. Although I limited the main analysis to categories with at least 10 books, averages can still be influenced by the composition and number of books within each category."
+  },
+  {
+    "objectID": "blog/posts/post2/index.html#conclusion",
+    "href": "blog/posts/post2/index.html#conclusion",
+    "title": "Finding the Best-Value Book Categories",
+    "section": "Conclusion",
+    "text": "Conclusion\nBy combining web scraping with a simple price-and-rating comparison, I identified five book categories that have both below-average prices and above-average ratings: Humor, Historical Fiction, Sequential Art, Mystery, and Science.\nThe results also show that “value” depends on what a reader cares about most. Humor stands out for its relatively high average rating, while Mystery stands out for its relatively low average price.\nMore importantly, this project demonstrates how information collected from the web can be transformed into a practical decision-making tool. Instead of looking at price or ratings separately, combining the two provides a clearer way to narrow down the available choices."
+  },
+  {
+    "objectID": "blog/posts/post2/index.html",
+    "href": "blog/posts/post2/index.html",
+    "title": "Finding the Best-Value Book Categories",
+    "section": "",
+    "text": "When choosing a book, price and reader ratings are often two useful pieces of information to consider. A highly rated book may seem appealing, but is it worth the price? On the other hand, the cheapest option may not necessarily provide the best reading experience.\nThis led me to a simple question:\n\nWhich book categories offer relatively highly rated books at lower prices?\n\nTo explore this question, I used web scraping to collect book information and compared prices and ratings across different categories."
   }
 ]

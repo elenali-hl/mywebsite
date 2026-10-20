@@ -95,4 +95,4 @@ The appropriate implication is to use these patterns to guide more targeted inve
 
 The figures and descriptive statistics summarize the same set of valid tract income estimates. All dollar amounts in the text are rounded to the nearest dollar; ratios and percentages are approximate.
 
-<!-- BEFORE SUBMISSION: Add the actual Blog5 GitHub URL here. Verify the real repository before describing its organization or claiming reproducibility. Its README should document dependencies, raw data sources, missing-value handling, and the exact script run order needed to regenerate cleaned data, the summary table, and both figures. Prefer generating the numerical values above from saved analysis outputs or inline R rather than maintaining them by hand. The current article supplies narrative and existing figures; it does not itself recreate the analysis. Keep the two PNG files beside this QMD, or update both image paths to their actual locations. -->
+

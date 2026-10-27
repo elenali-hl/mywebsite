@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2026-10-23">
+
+<title>Matching Parents and Children with SQL in Python – Student Name</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-6033a600180109c3731f6a886c29932c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Student Name</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../bio.html"> 
+<span class="menu-text">About Me</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../resume.html"> 
+<span class="menu-text">Resume</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../blog/index.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction-why-match-generations" id="toc-introduction-why-match-generations" class="nav-link active" data-scroll-target="#introduction-why-match-generations">Introduction: Why Match Generations?</a></li>
+  <li><a href="#data-and-identifiers" id="toc-data-and-identifiers" class="nav-link" data-scroll-target="#data-and-identifiers">1. Data and Identifiers</a></li>
+  <li><a href="#sql-inside-python-match-birth-mothers-and-children" id="toc-sql-inside-python-match-birth-mothers-and-children" class="nav-link" data-scroll-target="#sql-inside-python-match-birth-mothers-and-children">2. SQL Inside Python: Match Birth Mothers and Children</a>
+  <ul class="collapse">
+  <li><a href="#understanding-select-and-join" id="toc-understanding-select-and-join" class="nav-link" data-scroll-target="#understanding-select-and-join">Understanding SELECT and JOIN</a></li>
+  <li><a href="#why-not-match-on-family-id-alone" id="toc-why-not-match-on-family-id-alone" class="nav-link" data-scroll-target="#why-not-match-on-family-id-alone">Why not match on family ID alone?</a></li>
+  </ul></li>
+  <li><a href="#link-person-years-to-earnings" id="toc-link-person-years-to-earnings" class="nav-link" data-scroll-target="#link-person-years-to-earnings">3. Link Person-Years to Earnings</a></li>
+  <li><a href="#group-by-and-aggregation-construct-multi-year-earnings" id="toc-group-by-and-aggregation-construct-multi-year-earnings" class="nav-link" data-scroll-target="#group-by-and-aggregation-construct-multi-year-earnings">4. GROUP BY and Aggregation: Construct Multi-Year Earnings</a>
+  <ul class="collapse">
+  <li><a href="#understanding-group-by-and-aggregation" id="toc-understanding-group-by-and-aggregation" class="nav-link" data-scroll-target="#understanding-group-by-and-aggregation">Understanding GROUP BY and Aggregation</a></li>
+  <li><a href="#why-average-earnings" id="toc-why-average-earnings" class="nav-link" data-scroll-target="#why-average-earnings">Why Average Earnings?</a></li>
+  </ul></li>
+  <li><a href="#estimate-the-intergenerational-earnings-elasticity" id="toc-estimate-the-intergenerational-earnings-elasticity" class="nav-link" data-scroll-target="#estimate-the-intergenerational-earnings-elasticity">5. Estimate the Intergenerational Earnings Elasticity</a>
+  <ul class="collapse">
+  <li><a href="#single-year-versus-multi-year-results" id="toc-single-year-versus-multi-year-results" class="nav-link" data-scroll-target="#single-year-versus-multi-year-results">Single-Year Versus Multi-Year Results</a></li>
+  <li><a href="#interpretation" id="toc-interpretation" class="nav-link" data-scroll-target="#interpretation">Interpretation</a></li>
+  </ul></li>
+  <li><a href="#life-cycle-bias-why-age-at-measurement-matters" id="toc-life-cycle-bias-why-age-at-measurement-matters" class="nav-link" data-scroll-target="#life-cycle-bias-why-age-at-measurement-matters">6. Life-Cycle Bias: Why Age at Measurement Matters</a>
+  <ul class="collapse">
+  <li><a href="#comparing-ige-across-maternal-age-groups" id="toc-comparing-ige-across-maternal-age-groups" class="nav-link" data-scroll-target="#comparing-ige-across-maternal-age-groups">Comparing IGE Across Maternal Age Groups</a></li>
+  <li><a href="#interpretation-1" id="toc-interpretation-1" class="nav-link" data-scroll-target="#interpretation-1">Interpretation</a></li>
+  <li><a href="#why-life-cycle-bias-can-arise" id="toc-why-life-cycle-bias-can-arise" class="nav-link" data-scroll-target="#why-life-cycle-bias-can-arise">Why life-cycle bias can arise</a></li>
+  </ul></li>
+  <li><a href="#measurement-year-sensitivity-a-fixed-sample-demonstration" id="toc-measurement-year-sensitivity-a-fixed-sample-demonstration" class="nav-link" data-scroll-target="#measurement-year-sensitivity-a-fixed-sample-demonstration">7. Measurement-Year Sensitivity: A Fixed-Sample Demonstration</a>
+  <ul class="collapse">
+  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results">Results</a></li>
+  <li><a href="#what-does-figure-5-show" id="toc-what-does-figure-5-show" class="nav-link" data-scroll-target="#what-does-figure-5-show">What Does Figure 5 Show?</a></li>
+  </ul></li>
+  <li><a href="#discussion-what-do-these-results-tell-us" id="toc-discussion-what-do-these-results-tell-us" class="nav-link" data-scroll-target="#discussion-what-do-these-results-tell-us">8. Discussion: What Do These Results Tell Us?</a>
+  <ul class="collapse">
+  <li><a href="#first-accurate-family-matching-is-essential" id="toc-first-accurate-family-matching-is-essential" class="nav-link" data-scroll-target="#first-accurate-family-matching-is-essential">First, Accurate Family Matching Is Essential</a></li>
+  <li><a href="#second-income-measurement-affects-estimated-mobility" id="toc-second-income-measurement-affects-estimated-mobility" class="nav-link" data-scroll-target="#second-income-measurement-affects-estimated-mobility">Second, Income Measurement Affects Estimated Mobility</a></li>
+  <li><a href="#third-averaging-is-useful-but-not-a-complete-solution" id="toc-third-averaging-is-useful-but-not-a-complete-solution" class="nav-link" data-scroll-target="#third-averaging-is-useful-but-not-a-complete-solution">Third, Averaging Is Useful but Not a Complete Solution</a></li>
+  <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations">Limitations</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">9. Conclusion</a></li>
+  <li><a href="#reproducibility-and-code" id="toc-reproducibility-and-code" class="nav-link" data-scroll-target="#reproducibility-and-code">10. Reproducibility and Code</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Matching Parents and Children with SQL in Python</h1>
+<p class="subtitle lead">Intergenerational Earnings Mobility and the Timing of Income Measurement</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">Python</div>
+    <div class="quarto-category">SQL</div>
+    <div class="quarto-category">PSID</div>
+    <div class="quarto-category">Econometrics</div>
+    <div class="quarto-category">Intergenerational Mobility</div>
+  </div>
+  </div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">October 23, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction-why-match-generations" class="level2">
+<h2 class="anchored" data-anchor-id="introduction-why-match-generations">Introduction: Why Match Generations?</h2>
+<p>Do children from higher-earning families tend to earn more as adults? Answering this question requires two tasks: identifying parents and children in longitudinal records, and measuring earnings in a way that reflects long-run economic status. A single year can be unusually good or bad, and earnings change as people enter the labor market or retire.</p>
+<p><strong>Research question:</strong> How can SQL inside Python match mothers and adult children in the Panel Study of Income Dynamics (PSID), and how sensitive is the estimated intergenerational earnings elasticity (IGE) to using one year versus several years of earnings?</p>
+<p>This tutorial moves from identifiers to SQL joins, constructs individual earnings, uses SQL aggregation to average earnings, estimates the IGE, and examines measurement-year and maternal-age sensitivity.</p>
+<p>The analysis concerns <strong>birth mothers’ and adult children’s individual labor earnings</strong>, not total parental household income or causal effects.</p>
+</section>
+<section id="data-and-identifiers" class="level2">
+<h2 class="anchored" data-anchor-id="data-and-identifiers">1. Data and Identifiers</h2>
+<p>The PSID follows people and families over time. We combine an individual file, a parent-identification file, and family interview earnings records.</p>
+<p>The family interview identifiers change across survey waves, while stable individual identifiers allow us to follow the same people.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Identifier</th>
+<th>Meaning</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>ER30001</code>, <code>ER30002</code></td>
+<td>Stable individual identifiers</td>
+<td>Identify a person across records</td>
+</tr>
+<tr class="even">
+<td><code>PID2</code>, <code>PID3</code></td>
+<td>Individual identifiers in the parent-identification file</td>
+<td>Identify the child</td>
+</tr>
+<tr class="odd">
+<td><code>PID4</code>, <code>PID5</code></td>
+<td>Birth-mother identifiers</td>
+<td>Identify the mother</td>
+</tr>
+<tr class="even">
+<td>Year-specific family interview ID</td>
+<td>Family membership in a particular survey</td>
+<td>Link the person-year to family earnings</td>
+</tr>
+</tbody>
+</table>
+<p>The surveys are biennial; the income reference year precedes the interview year.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Interview year</th>
+<th>Income year</th>
+<th>Reference-person labor earnings</th>
+<th>Spouse labor earnings</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>2017</td>
+<td>2016</td>
+<td><code>ER71293</code></td>
+<td><code>ER71321</code></td>
+</tr>
+<tr class="even">
+<td>2019</td>
+<td>2018</td>
+<td><code>ER77315</code></td>
+<td><code>ER77343</code></td>
+</tr>
+<tr class="odd">
+<td>2021</td>
+<td>2020</td>
+<td><code>ER81642</code></td>
+<td><code>ER81670</code></td>
+</tr>
+<tr class="even">
+<td>2023</td>
+<td>2022</td>
+<td><code>ER85496</code></td>
+<td><code>ER85524</code></td>
+</tr>
+</tbody>
+</table>
+<p>We first assign reference-person or spouse labor earnings to the corresponding individual using the person’s role within the family.</p>
+<p>We <strong>do not</strong> assign total family earnings to every household member.</p>
+<p>The full import and cleaning operations are implemented in <code>code/01_load_data.py</code> and <code>code/02_clean_data.py</code>.</p>
+</section>
+<section id="sql-inside-python-match-birth-mothers-and-children" class="level2">
+<h2 class="anchored" data-anchor-id="sql-inside-python-match-birth-mothers-and-children">2. SQL Inside Python: Match Birth Mothers and Children</h2>
+<p>Python’s built-in <code>sqlite3</code> package runs SQL without requiring a separate database server.</p>
+<p>The following teaching example illustrates the key operations. It assumes that the earlier cleaning steps produced DataFrames <code>pid_df</code> and <code>individual_df</code> with the original PSID identifier columns.</p>
+<p>The complete executable pipeline is in <code>code/03_sql_matching.py</code>.</p>
+<div id="15c2773e" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sqlite3</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> sqlite3.<span class="ex">connect</span>(<span class="st">":memory:"</span>) <span class="im">as</span> conn:</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    pid_df.to_sql(</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"pid"</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        conn,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        index<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        if_exists<span class="op">=</span><span class="st">"replace"</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    individual_df.to_sql(</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">"individuals"</span>,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        conn,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        index<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>        if_exists<span class="op">=</span><span class="st">"replace"</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    pairs <span class="op">=</span> pd.read_sql_query(</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        <span class="st">"""</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="st">        SELECT DISTINCT</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="st">            p.PID2 AS child_interview_id,</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="st">            p.PID3 AS child_person_number,</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="st">            p.PID4 AS mother_interview_id,</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="st">            p.PID5 AS mother_person_number</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="st">        FROM pid AS p</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="st">        INNER JOIN individuals AS c</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="st">            ON p.PID2 = c.ER30001</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="st">           AND p.PID3 = c.ER30002</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="st">        INNER JOIN individuals AS m</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="st">            ON p.PID4 = m.ER30001</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="st">           AND p.PID5 = m.ER30002</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="st">        WHERE p.PID4 IS NOT NULL</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="st">          AND p.PID5 IS NOT NULL</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="st">        """</span>,</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>        conn</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="understanding-select-and-join" class="level3">
+<h3 class="anchored" data-anchor-id="understanding-select-and-join">Understanding SELECT and JOIN</h3>
+<p><code>SELECT</code> chooses the variables needed for the analysis, while <code>AS</code> assigns readable names.</p>
+<p>The first <code>INNER JOIN</code> checks whether the child appears in the individual records.</p>
+<p>The second <code>INNER JOIN</code> checks whether the birth mother also appears.</p>
+<p>Each join uses <strong>both components of the individual identifier</strong>. Matching on only one component could incorrectly link unrelated individuals.</p>
+<p><code>WHERE</code> excludes records without usable maternal identifiers, and <code>DISTINCT</code> removes duplicate output rows.</p>
+<p>An <code>INNER JOIN</code> retains only successful matches.</p>
+<p>A <code>LEFT JOIN</code>, in contrast, preserves unmatched rows from the left-hand table.</p>
+</section>
+<section id="why-not-match-on-family-id-alone" class="level3">
+<h3 class="anchored" data-anchor-id="why-not-match-on-family-id-alone">Why not match on family ID alone?</h3>
+<p>A child and mother may live in different households as the child grows up.</p>
+<p>Their current family IDs therefore need not match, and family IDs are not stable individual identifiers.</p>
+<p>The matching pipeline identifies <strong>41,839 unique mother–child identifier pairs</strong>.</p>
+<p>After restricting to adult children aged 25 or older and pairs with age information for both generations in 2023, the working sample contains <strong>4,242 pairs</strong>.</p>
+<p>These are candidate relationships, not yet the regression sample. Earnings requirements further reduce the number of observations.</p>
+</section>
+</section>
+<section id="link-person-years-to-earnings" class="level2">
+<h2 class="anchored" data-anchor-id="link-person-years-to-earnings">3. Link Person-Years to Earnings</h2>
+<p>After identifying relatives, we connect each individual-year observation to the correct family interview record.</p>
+<p>The join requires both the family ID and the interview year because a family interview identifier is not a permanent person identifier.</p>
+<pre class="{sql}"><code>--| eval: false
+
+SELECT
+    i.interview_id,
+    i.person_number,
+    i.year,
+    i.age,
+    f.rp_income,
+    f.spouse_income
+
+FROM individual_long AS i
+
+LEFT JOIN family_income_long AS f
+    ON i.family_id = f.family_id
+   AND i.year = f.year;</code></pre>
+<p>The query illustrates the join.</p>
+<p>The executable script additionally uses relationship and sequence information to assign the correct <strong>individual</strong> earnings measure.</p>
+<p><code>LEFT JOIN</code> retains person-year observations even when the family earnings record is unavailable, making missingness visible rather than silently discarding observations.</p>
+<p>The cleaned panel contains <strong>96,340 person-year observations</strong> across the four survey waves.</p>
+<p>The implemented joins and validation checks are in <code>code/03_sql_matching.py</code>.</p>
+</section>
+<section id="group-by-and-aggregation-construct-multi-year-earnings" class="level2">
+<h2 class="anchored" data-anchor-id="group-by-and-aggregation-construct-multi-year-earnings">4. GROUP BY and Aggregation: Construct Multi-Year Earnings</h2>
+<p>A single observed earnings year may reflect a temporary shock.</p>
+<p>We therefore construct a second earnings measure: each person’s average observed positive labor earnings across the four income reference years.</p>
+<div id="0966e4ee" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># income_panel is the cleaned person-year earnings DataFrame.</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> sqlite3.<span class="ex">connect</span>(<span class="st">":memory:"</span>) <span class="im">as</span> conn:</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    income_panel.to_sql(</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"income_panel"</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        conn,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>        index<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        if_exists<span class="op">=</span><span class="st">"replace"</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    average_earnings <span class="op">=</span> pd.read_sql_query(</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"""</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="st">        SELECT</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="st">            interview_id,</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="st">            person_number,</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="st">            COUNT(*) AS n_positive_years,</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="st">            AVG(individual_income) AS avg_income,</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="st">            MIN(income_year) AS first_income_year,</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="st">            MAX(income_year) AS last_income_year</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="st">        FROM income_panel</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="st">        WHERE individual_income &gt; 0</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="st">        GROUP BY</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="st">            interview_id,</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="st">            person_number</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="st">        """</span>,</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>        conn</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="understanding-group-by-and-aggregation" class="level3">
+<h3 class="anchored" data-anchor-id="understanding-group-by-and-aggregation">Understanding GROUP BY and Aggregation</h3>
+<p><code>WHERE individual_income &gt; 0</code> selects positive earnings observations before aggregation.</p>
+<p><code>GROUP BY</code> collects multiple year records belonging to the same individual.</p>
+<p><code>COUNT(*)</code> counts qualifying earnings observations, while <code>AVG()</code> calculates their arithmetic mean.</p>
+<p><code>MIN()</code> and <code>MAX()</code> identify the earliest and latest earnings years observed.</p>
+<p>We require <strong>at least two positive-income observations for both the mother and child</strong> in the primary multi-year specification.</p>
+</section>
+<section id="why-average-earnings" class="level3">
+<h3 class="anchored" data-anchor-id="why-average-earnings">Why Average Earnings?</h3>
+<p>Suppose an individual’s observed earnings can be written as:</p>
+<p><span class="math display">\[
+Y_{it} = Y_i^{long-run} + u_{it}
+\]</span></p>
+<p>where <span class="math inline">\(Y_i^{long-run}\)</span> represents long-run earnings and <span class="math inline">\(u_{it}\)</span> represents a temporary income fluctuation.</p>
+<p>Averaging over several years gives:</p>
+<p><span class="math display">\[
+\bar{Y}_i =
+Y_i^{long-run}
++
+\frac{1}{T}\sum_{t=1}^{T}u_{it}
+\]</span></p>
+<p>If temporary fluctuations partly offset one another, averaging can reduce their influence.</p>
+<p>However, this study averages <strong>positive observed nominal labor earnings</strong>, not lifetime income.</p>
+<p>Excluding zero-income years creates selection concerns, and the averages are not adjusted for inflation.</p>
+<p>These limitations matter when interpreting the IGE.</p>
+</section>
+</section>
+<section id="estimate-the-intergenerational-earnings-elasticity" class="level2">
+<h2 class="anchored" data-anchor-id="estimate-the-intergenerational-earnings-elasticity">5. Estimate the Intergenerational Earnings Elasticity</h2>
+<p>We estimate the following log–log OLS regression:</p>
+<p><span class="math display">\[
+\ln(Y_i^{child})
+=
+\alpha
++
+\beta\ln(Y_i^{mother})
++
+\varepsilon_i
+\]</span></p>
+<p>where:</p>
+<ul>
+<li><span class="math inline">\(Y_i^{child}\)</span> is the adult child’s labor earnings.</li>
+<li><span class="math inline">\(Y_i^{mother}\)</span> is the birth mother’s labor earnings.</li>
+<li><span class="math inline">\(\alpha\)</span> is the intercept.</li>
+<li><span class="math inline">\(\beta\)</span> is the intergenerational earnings elasticity.</li>
+<li><span class="math inline">\(\varepsilon_i\)</span> represents other factors associated with child earnings.</li>
+</ul>
+<p>The coefficient <span class="math inline">\(\beta\)</span> measures the percentage association between maternal and adult-child earnings.</p>
+<p>For example, if <span class="math inline">\(\beta = 0.10\)</span>, a 1% increase in maternal earnings is associated with approximately 0.10% higher child earnings.</p>
+<p>A larger positive IGE indicates stronger measured earnings persistence across generations.</p>
+<p>Importantly, this coefficient is <strong>descriptive rather than causal</strong>.</p>
+<p>We report HC1 heteroskedasticity-robust standard errors and approximate 95% confidence intervals.</p>
+<p>The regression analysis is implemented in <code>code/04_ige_analysis.py</code>.</p>
+<section id="single-year-versus-multi-year-results" class="level3">
+<h3 class="anchored" data-anchor-id="single-year-versus-multi-year-results">Single-Year Versus Multi-Year Results</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 21%">
+<col style="width: 28%">
+<col style="width: 28%">
+<col style="width: 21%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Specification</th>
+<th style="text-align: right;">Mother–child pairs</th>
+<th style="text-align: right;">IGE</th>
+<th>95% CI</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Single-year (2022), available sample</td>
+<td style="text-align: right;">1,178</td>
+<td style="text-align: right;">0.0403</td>
+<td>[−0.0030, 0.0836]</td>
+</tr>
+<tr class="even">
+<td>Multi-year (2+ positive waves), available sample</td>
+<td style="text-align: right;">1,602</td>
+<td style="text-align: right;">0.0605</td>
+<td>[0.0221, 0.0988]</td>
+</tr>
+<tr class="odd">
+<td>Single-year, common sample</td>
+<td style="text-align: right;">1,027</td>
+<td style="text-align: right;">0.0322</td>
+<td>[−0.0129, 0.0773]</td>
+</tr>
+<tr class="even">
+<td>Multi-year, common sample</td>
+<td style="text-align: right;">1,027</td>
+<td style="text-align: right;">0.0641</td>
+<td>[0.0085, 0.1197]</td>
+</tr>
+</tbody>
+</table>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figure1_single_year_ige.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 1: Single-year mother–child earnings association. Each point represents a matched mother–child pair; the plot summarizes association, not causation.</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figure2_multi_year_ige.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 2: Multi-year mother–child earnings association. Both axes use multi-year earnings measures; the plot summarizes association, not causation.</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figure3_ige_comparison.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 3: Comparison of IGE estimates across specifications. Compare estimates and uncertainty across income definitions; the available-sample estimates also differ in sample composition.</figcaption>
+</figure>
+</div>
+</section>
+<section id="interpretation" class="level3">
+<h3 class="anchored" data-anchor-id="interpretation">Interpretation</h3>
+<p>The first two specifications use different samples.</p>
+<p>Therefore, their difference may reflect both income measurement and sample composition.</p>
+<p>To address this concern, we compare the two measures using the <strong>same 1,027 mother–child pairs</strong>.</p>
+<p>Within this common sample, the IGE increases from <strong>0.0322</strong> using single-year earnings to <strong>0.0641</strong> using multi-year average earnings.</p>
+<p>This pattern is consistent with the possibility that temporary income fluctuations weaken measured intergenerational persistence.</p>
+<p>However, a paired bootstrap with 1,000 replications estimates the difference as <strong>0.0318</strong>, with a 95% confidence interval of <strong>[−0.0081, 0.0759]</strong>.</p>
+<p>Because the interval includes zero, we cannot conclude that averaging significantly increases the IGE.</p>
+<p>The bootstrap also resamples mother–child pairs rather than clustering siblings or mothers, which is an additional inference limitation.</p>
+</section>
+</section>
+<section id="life-cycle-bias-why-age-at-measurement-matters" class="level2">
+<h2 class="anchored" data-anchor-id="life-cycle-bias-why-age-at-measurement-matters">6. Life-Cycle Bias: Why Age at Measurement Matters</h2>
+<p>Labor earnings vary over the life cycle.</p>
+<p>They may be relatively low early in a career, rise with experience, and decline when working hours decrease or retirement begins.</p>
+<p>As a result, income observed at a particular age may not accurately represent an individual’s long-run earning capacity.</p>
+<p>This creates the possibility of <strong>life-cycle bias</strong> in estimated intergenerational earnings persistence.</p>
+<p>For example, a mother who earned relatively high income during her working years may report low labor earnings after retirement.</p>
+<p>If researchers observe only her retirement-year earnings, they may underestimate her earlier economic status.</p>
+<section id="comparing-ige-across-maternal-age-groups" class="level3">
+<h3 class="anchored" data-anchor-id="comparing-ige-across-maternal-age-groups">Comparing IGE Across Maternal Age Groups</h3>
+<p>We divide the sample into groups based on mothers’ ages in 2023.</p>
+<p>Within each age group, the single-year and multi-year estimates use the same mother–child pairs.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Mother’s age</th>
+<th style="text-align: right;">Pairs</th>
+<th style="text-align: right;">Single-year IGE</th>
+<th style="text-align: right;">Multi-year IGE</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>45–54</td>
+<td style="text-align: right;">242</td>
+<td style="text-align: right;">0.2001</td>
+<td style="text-align: right;">0.1819</td>
+</tr>
+<tr class="even">
+<td>55–64</td>
+<td style="text-align: right;">489</td>
+<td style="text-align: right;">0.0954</td>
+<td style="text-align: right;">0.1317</td>
+</tr>
+<tr class="odd">
+<td>65+</td>
+<td style="text-align: right;">279</td>
+<td style="text-align: right;">−0.0304</td>
+<td style="text-align: right;">0.0256</td>
+</tr>
+</tbody>
+</table>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figure4_ige_by_mother_age.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 4: Single-year and multi-year IGE by maternal age. Age groups are based on maternal age in 2023; differences may also reflect cohort composition and employment selection.</figcaption>
+</figure>
+</div>
+</section>
+<section id="interpretation-1" class="level3">
+<h3 class="anchored" data-anchor-id="interpretation-1">Interpretation</h3>
+<p>The estimated IGE is substantially stronger among mothers aged 45–54 than among mothers aged 65 and older.</p>
+<p>For the oldest group, the single-year estimate is slightly negative, while the multi-year estimate is close to zero.</p>
+<p>Both confidence intervals include zero.</p>
+<p>One possible explanation is that labor earnings measured near or after retirement provide a poor approximation of long-run economic status.</p>
+<p>Averaging several years may reduce temporary fluctuations, but it may not fully correct retirement-related measurement problems.</p>
+<p>However, these differences could also reflect cohort effects, employment selection, and other characteristics.</p>
+<p>Moreover, bootstrap confidence intervals for the single-year versus multi-year differences include zero in every age group.</p>
+<p>Therefore, the evidence is <strong>consistent with potential life-cycle bias</strong>, but it does not establish its magnitude or cause.</p>
+</section>
+<section id="why-life-cycle-bias-can-arise" class="level3">
+<h3 class="anchored" data-anchor-id="why-life-cycle-bias-can-arise">Why life-cycle bias can arise</h3>
+<p>Life-cycle bias occurs when earnings measured at a particular age are an imperfect proxy for long-run economic status. Early-career earnings may understate future earning capacity, while earnings near or after retirement may understate earlier economic achievement. If these discrepancies differ systematically across mothers or children, a regression using current earnings can misrepresent the association between their longer-run earnings. Averaging observations across years can reduce transitory shocks, but it cannot fully correct systematic age-related differences or the exclusion of zero-earnings years.</p>
+<p><strong>What the age-group results can and cannot show:</strong> The weaker point estimates for older mothers are consistent with retirement-related measurement problems. However, age groups also differ in birth cohort, employment selection, and other characteristics; their estimates are not a causal test of life-cycle bias. The within-age-group bootstrap comparisons do not establish statistically significant differences between the two earnings measures.</p>
+</section>
+</section>
+<section id="measurement-year-sensitivity-a-fixed-sample-demonstration" class="level2">
+<h2 class="anchored" data-anchor-id="measurement-year-sensitivity-a-fixed-sample-demonstration">7. Measurement-Year Sensitivity: A Fixed-Sample Demonstration</h2>
+<p>To examine the importance of measurement timing more directly, we hold the mother–child sample constant.</p>
+<p>Using <code>code/06_lifecycle_analysis.py</code>, we identify <strong>489 mother–child pairs</strong> for whom both generations have positive labor earnings in all four observed income years:</p>
+<p>2016, 2018, 2020, and 2022.</p>
+<p>This balanced sample contains <strong>1,956 pair-year observations</strong>.</p>
+<p>We then estimate a separate single-year IGE for each earnings year and compare these estimates with an IGE based on four-wave average earnings.</p>
+<section id="results" class="level3">
+<h3 class="anchored" data-anchor-id="results">Results</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 22%">
+<col style="width: 22%">
+<col style="width: 22%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Income year</th>
+<th style="text-align: right;">Pairs</th>
+<th style="text-align: right;">IGE</th>
+<th style="text-align: right;">HC1 robust SE</th>
+<th>95% CI</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>2016</td>
+<td style="text-align: right;">489</td>
+<td style="text-align: right;">0.0410</td>
+<td style="text-align: right;">0.0351</td>
+<td>[−0.0277, 0.1098]</td>
+</tr>
+<tr class="even">
+<td>2018</td>
+<td style="text-align: right;">489</td>
+<td style="text-align: right;">0.0051</td>
+<td style="text-align: right;">0.0362</td>
+<td>[−0.0660, 0.0761]</td>
+</tr>
+<tr class="odd">
+<td>2020</td>
+<td style="text-align: right;">489</td>
+<td style="text-align: right;">0.0305</td>
+<td style="text-align: right;">0.0444</td>
+<td>[−0.0564, 0.1175]</td>
+</tr>
+<tr class="even">
+<td>2022</td>
+<td style="text-align: right;">489</td>
+<td style="text-align: right;">0.0558</td>
+<td style="text-align: right;">0.0284</td>
+<td>[0.0001, 0.1114]</td>
+</tr>
+<tr class="odd">
+<td><strong>Four-wave average</strong></td>
+<td style="text-align: right;"><strong>489</strong></td>
+<td style="text-align: right;"><strong>0.0432</strong></td>
+<td style="text-align: right;"><strong>0.0391</strong></td>
+<td><strong>[−0.0334, 0.1199]</strong></td>
+</tr>
+</tbody>
+</table>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figure5_ige_by_measurement_year.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 5: IGE sensitivity to earnings measurement year. All estimates use the same 489 pairs; differences across years are descriptive and are not established as statistically significant.</figcaption>
+</figure>
+</div>
+</section>
+<section id="what-does-figure-5-show" class="level3">
+<h3 class="anchored" data-anchor-id="what-does-figure-5-show">What Does Figure 5 Show?</h3>
+<p>The single-year IGE varies from <strong>0.0051 in 2018</strong> to <strong>0.0558 in 2022</strong>, even though the mother–child pairs remain exactly the same.</p>
+<p>This demonstrates that the estimated relationship between maternal and child earnings is sensitive to the income measurement year.</p>
+<p>A researcher observing only 2018 earnings would obtain a much smaller IGE point estimate than a researcher observing only 2022 earnings.</p>
+<p>The multi-year IGE is <strong>0.0432</strong>, which lies within the range of the single-year estimates.</p>
+<p>Importantly, multi-year averaging does not necessarily produce a larger IGE.</p>
+<p>Its purpose is to reduce the influence of temporary earnings fluctuations, not to mechanically increase the estimated coefficient.</p>
+<p>The confidence intervals indicate considerable statistical uncertainty.</p>
+<p>The multi-year estimate’s 95% confidence interval includes zero, and we have not conducted a formal paired test of all four yearly coefficients.</p>
+<p>Therefore, the observed differences should not be interpreted as statistically significant without additional testing.</p>
+<p>Furthermore, year-specific economic shocks may affect earnings alongside changes in age.</p>
+<p>Figure 5 demonstrates <strong>measurement-year sensitivity</strong>, while Figure 4 provides complementary evidence about maternal age.</p>
+<p>Together, they illustrate why single-point income measurement can create problems for studying intergenerational mobility, although they do not isolate a causal life-cycle effect.</p>
+</section>
+</section>
+<section id="discussion-what-do-these-results-tell-us" class="level2">
+<h2 class="anchored" data-anchor-id="discussion-what-do-these-results-tell-us">8. Discussion: What Do These Results Tell Us?</h2>
+<p>Three findings are particularly important.</p>
+<section id="first-accurate-family-matching-is-essential" class="level3">
+<h3 class="anchored" data-anchor-id="first-accurate-family-matching-is-essential">First, Accurate Family Matching Is Essential</h3>
+<p>Intergenerational analysis begins with identifying the correct relatives.</p>
+<p>Using stable individual identifiers and SQL joins prevents researchers from incorrectly matching individuals based only on current household membership.</p>
+<p>SQL is therefore not simply a technical convenience. It determines which parent–child relationships enter the analysis.</p>
+</section>
+<section id="second-income-measurement-affects-estimated-mobility" class="level3">
+<h3 class="anchored" data-anchor-id="second-income-measurement-affects-estimated-mobility">Second, Income Measurement Affects Estimated Mobility</h3>
+<p>Within the common sample of 1,027 mother–child pairs, the single-year IGE is 0.0322, compared with 0.0641 using multi-year earnings.</p>
+<p>Although this difference is not statistically significant in the paired bootstrap, it demonstrates the importance of checking whether results depend on the chosen income measure.</p>
+<p>The balanced-sample analysis reinforces this concern: single-year estimates vary across earnings years even when sample composition is held constant.</p>
+</section>
+<section id="third-averaging-is-useful-but-not-a-complete-solution" class="level3">
+<h3 class="anchored" data-anchor-id="third-averaging-is-useful-but-not-a-complete-solution">Third, Averaging Is Useful but Not a Complete Solution</h3>
+<p>Multi-year averaging can reduce the influence of temporary income shocks.</p>
+<p>However, it does not automatically remove life-cycle bias.</p>
+<p>If observed earnings are concentrated near retirement, averaging several low-earnings years may still underestimate long-run earning capacity.</p>
+<p>A longer income history measured during representative working ages would provide a better approximation of permanent economic status.</p>
+</section>
+<section id="limitations" class="level3">
+<h3 class="anchored" data-anchor-id="limitations">Limitations</h3>
+<p>Several limitations should be considered.</p>
+<ol type="1">
+<li><strong>Maternal earnings only:</strong> The analysis excludes paternal earnings and total parental household resources.</li>
+<li><strong>Positive-income selection:</strong> Zero-income observations are excluded from log-income regressions and positive-income averages.</li>
+<li><strong>Limited observation window:</strong> Four intermittent earnings years do not represent entire careers.</li>
+<li><strong>Nominal earnings:</strong> Multi-year averages are not inflation-adjusted.</li>
+<li><strong>Survey representativeness:</strong> PSID survey weights are not incorporated.</li>
+<li><strong>Statistical dependence:</strong> HC1 standard errors do not account for clustering among siblings or mothers.</li>
+<li><strong>Noncausal interpretation:</strong> The estimated IGE measures association, not the causal effect of maternal earnings on children’s outcomes.</li>
+</ol>
+<p>These limitations also help explain why the estimates should not be interpreted as nationally representative measures of intergenerational mobility.</p>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">9. Conclusion</h2>
+<p>This tutorial demonstrates how SQL within Python can be used to construct a longitudinal mother–child earnings dataset and estimate intergenerational earnings elasticity.</p>
+<p><code>SELECT</code> and <code>JOIN</code> identify relatives and connect records, while <code>GROUP BY</code>, <code>COUNT()</code>, and <code>AVG()</code> construct multi-year earnings measures.</p>
+<p>Using PSID data, the IGE increases from <strong>0.0322 to 0.0641</strong> when moving from single-year to multi-year earnings within the same 1,027 mother–child pairs.</p>
+<p>However, the paired-bootstrap difference is not statistically significant.</p>
+<p>A stricter balanced sample of 489 pairs shows that single-year IGE estimates vary between <strong>0.0051 and 0.0558</strong> across four income years.</p>
+<p>Age-group comparisons further suggest that the timing of income measurement may be particularly important when parental earnings are observed near retirement.</p>
+<p>The broader lesson is that <strong>intergenerational mobility estimates depend not only on the regression model but also on how individuals are matched and how economic status is measured</strong>.</p>
+<p>Careful SQL matching, transparent aggregation, consistent samples, and explicit treatment of measurement uncertainty are essential for credible longitudinal analysis.</p>
+</section>
+<section id="reproducibility-and-code" class="level2">
+<h2 class="anchored" data-anchor-id="reproducibility-and-code">10. Reproducibility and Code</h2>
+<p>The analysis is organized into six Python scripts:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Script</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>01_load_data.py</code></td>
+<td>Import and inspect raw PSID data</td>
+</tr>
+<tr class="even">
+<td><code>02_clean_data.py</code></td>
+<td>Clean identifiers and reshape individual records</td>
+</tr>
+<tr class="odd">
+<td><code>03_sql_matching.py</code></td>
+<td>Match mothers and children using SQL</td>
+</tr>
+<tr class="even">
+<td><code>04_ige_analysis.py</code></td>
+<td>Construct earnings measures and estimate IGE</td>
+</tr>
+<tr class="odd">
+<td><code>05_visualizations.py</code></td>
+<td>Generate Figures 1–4</td>
+</tr>
+<tr class="even">
+<td><code>06_lifecycle_analysis.py</code></td>
+<td>Analyze measurement-year sensitivity and generate Figure 5</td>
+</tr>
+</tbody>
+</table>
+<p>After obtaining the required PSID files, run the scripts from the project root:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> run <span class="at">-n</span> base python code/01_load_data.py</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> run <span class="at">-n</span> base python code/02_clean_data.py</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> run <span class="at">-n</span> base python code/03_sql_matching.py</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> run <span class="at">-n</span> base python code/04_ige_analysis.py</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> run <span class="at">-n</span> base python code/05_visualizations.py</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> run <span class="at">-n</span> base python code/06_lifecycle_analysis.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The shortened SQL snippets in this tutorial explain the essential operations.</p>
+<p>The complete executable pipeline contains the data-loading steps, identifier validation, family-role assignment, regression procedures, and output generation.</p>
+<p>See the accompanying <code>README.md</code> for the required packages, raw-data structure, and detailed reproduction instructions.</p>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<ul>
+<li>Panel Study of Income Dynamics (PSID), Survey Research Center, Institute for Social Research, University of Michigan. <a href="https://psidonline.isr.umich.edu/" class="uri">https://psidonline.isr.umich.edu/</a></li>
+<li>Solon, G. (1992). “Intergenerational Income Mobility in the United States.” <em>American Economic Review</em>, 82(3), 393–408.</li>
+<li>Haider, S., &amp; Solon, G. (2006). “Life-Cycle Variation in the Association between Current and Lifetime Earnings.” <em>American Economic Review</em>, 96(4), 1308–1320.</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p><img src="../../../images/UniversityofPennsylvania_FullLogo_RGB.png" class="img-fluid" width="100"></p>
+</div>   
+    <div class="nav-footer-center">
+<p>© 2026 Student Name</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

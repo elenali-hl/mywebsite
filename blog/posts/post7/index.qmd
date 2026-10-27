@@ -1,0 +1,339 @@
+---
+title: "Does Economic Growth Translate into Longer Lives?"
+subtitle: "Income, longevity, and divergent development paths, 2000–2024"
+date: 2026-10-26
+categories: [Data Visualization, Plotly, Economic Development, Public Health, World Bank]
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: true
+    code-tools: true
+    fig-cap-location: bottom
+engine: knitr
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+# All reported numerical results are calculated from the same local CSV.
+library(dplyr)
+library(readr)
+library(tidyr)
+library(plotly)
+library(knitr)
+
+input_file <- "data/wdi_clean.csv"
+if (!file.exists(input_file)) {
+  stop("Place wdi_clean.csv in data/ beside index.qmd before rendering.")
+}
+raw <- read_csv(input_file, show_col_types = FALSE)
+required <- c("country", "region", "year", "gdp_per_capita",
+              "life_expectancy", "population_millions")
+if (!all(required %in% names(raw))) {
+  stop(paste("Missing columns:", paste(setdiff(required, names(raw)), collapse = ", ")))
+}
+wdi <- raw %>%
+  mutate(year = as.integer(as.character(year)),
+         country = as.character(country), region = as.character(region)) %>%
+  filter(between(year, 2000, 2024),
+         !is.na(country), nzchar(country), !is.na(region), nzchar(region),
+         is.finite(gdp_per_capita), gdp_per_capita > 0,
+         is.finite(life_expectancy), life_expectancy > 0,
+         is.finite(population_millions), population_millions > 0) %>%
+  arrange(region, country, year)
+if (!nrow(wdi)) stop("No valid observations remain.")
+if (anyDuplicated(wdi[c("country", "year")])) stop("Duplicate economy-year records.")
+if (!all(2000:2024 %in% wdi$year)) stop("At least one study year is absent.")
+
+fmt <- function(x, digits = 2) formatC(x, format = "f", digits = digits, big.mark = ",")
+pct <- function(x) paste0(ifelse(x > 0, "+", ""), fmt(x, 1), "%")
+r_level <- cor(wdi$gdp_per_capita, wdi$life_expectancy)
+r_log <- cor(log(wdi$gdp_per_capita), wdi$life_expectancy)
+fit <- lm(life_expectancy ~ log(gdp_per_capita), data = wdi)
+b0 <- unname(coef(fit)[1]); b1 <- unname(coef(fit)[2])
+r2 <- summary(fit)$r.squared
+
+annual <- wdi %>% group_by(year) %>% summarise(
+  economies = n(), mean_gdp = mean(gdp_per_capita),
+  mean_life = mean(life_expectancy), .groups = "drop")
+regional <- wdi %>% group_by(region) %>% summarise(
+  economies = n_distinct(country), observations = n(),
+  mean_life = mean(life_expectancy), .groups = "drop") %>%
+  arrange(desc(mean_life))
+
+endpoints <- wdi %>% filter(year %in% c(2000, 2024)) %>%
+  select(country, year, gdp_per_capita, life_expectancy) %>%
+  pivot_wider(names_from = year, values_from = c(gdp_per_capita, life_expectancy),
+              names_sep = "_") %>% drop_na() %>%
+  mutate(gdp_change = 100 * (gdp_per_capita_2024 / gdp_per_capita_2000 - 1),
+         life_change = life_expectancy_2024 - life_expectancy_2000)
+if (!nrow(endpoints)) stop("No matched endpoint sample.")
+early_gdp <- mean(endpoints$gdp_per_capita_2000)
+late_gdp <- mean(endpoints$gdp_per_capita_2024)
+early_life <- mean(endpoints$life_expectancy_2000)
+late_life <- mean(endpoints$life_expectancy_2024)
+examples <- endpoints %>% filter(country %in% c("Malawi", "Rwanda", "Zimbabwe", "Burundi"))
+
+pandemic_ids <- wdi %>% filter(year %in% c(2019, 2021, 2024)) %>%
+  count(country) %>% filter(n == 3) %>% select(country)
+pandemic <- wdi %>% semi_join(pandemic_ids, by = "country") %>%
+  filter(year %in% c(2019, 2021, 2024)) %>% group_by(year) %>%
+  summarise(economies = n(), mean_life = mean(life_expectancy), .groups = "drop")
+if (nrow(pandemic) != 3) stop("Cannot construct matched pandemic comparison.")
+p19 <- pandemic$mean_life[pandemic$year == 2019]
+p21 <- pandemic$mean_life[pandemic$year == 2021]
+p24 <- pandemic$mean_life[pandemic$year == 2024]
+
+# Save reproducible statistical outputs beside the page source.
+dir.create("results/tables", recursive = TRUE, showWarnings = FALSE)
+write_csv(annual, "results/tables/annual_summary.csv")
+write_csv(regional, "results/tables/regional_summary.csv")
+write_csv(endpoints, "results/tables/endpoint_changes.csv")
+write_csv(pandemic, "results/tables/pandemic_matched_summary.csv")
+write_csv(tibble(intercept = b0, log_gdp_coefficient = b1, r_squared = r2,
+                 correlation_level = r_level, correlation_log = r_log,
+                 observations = nrow(wdi)), "results/tables/pooled_model_summary.csv")
+```
+
+## Introduction
+
+GDP per capita is widely used to summarize economic development, but people ultimately care about what economic resources make possible: better living conditions, greater security, and healthier lives. If income and health always improved together, income growth would be a convenient indicator of broader progress. If their paths diverge, evaluating development requires looking directly at health outcomes as well.
+
+This post asks: **How is GDP per capita associated with life expectancy, and do individual economies' development paths follow that global relationship between 2000 and 2024?**
+
+The distinction matters. A comparison showing that richer economies tend to have longer lives does not establish that an economy becoming richer will experience the same improvement in longevity. Public health conditions, the distribution of resources, and historical starting points may also matter.
+
+I use World Bank World Development Indicators (WDI) data and an interactive Plotly visualization to examine three aspects of the question: the global income–health association, changes within economies over time, and exceptions to the overall pattern. The goal is descriptive: to assess how informative GDP per capita is about health, rather than identify a causal effect of economic growth.
+
+## Data and Methods
+
+### Sources and measurement
+
+The analysis uses annual WDI observations for 2000–2024. The unit of observation is an **economy in a particular year**, not an individual person.
+
+| Variable | WDI indicator | Interpretation |
+|---|---|---|
+| GDP per capita | `NY.GDP.PCAP.PP.KD` | Output per person in constant PPP international dollars |
+| Life expectancy | `SP.DYN.LE00.IN` | Life expectancy at birth, in years |
+| Population | `SP.POP.TOTL` | Total population, converted to millions for display |
+
+PPP adjusts for differences in purchasing power across economies, while constant prices support comparisons over time within a consistent data vintage. The exact PPP price base and download date should be retained with the original WDI export in `data-raw/`; neither can be recovered reliably from these three numeric series alone. The chart therefore labels the measure as constant PPP international dollars without assigning an unverified base year.
+
+Life expectancy at birth summarizes the mortality conditions prevailing in a given year. It is not the realized lifespan of that year's newborn cohort. Population controls bubble size; **it does not weight the correlations, regression, or averages**.
+
+Data sources: [World Bank WDI](https://databank.worldbank.org/source/world-development-indicators), [GDP per capita indicator](https://data.worldbank.org/indicator/NY.GDP.PCAP.PP.KD), [life expectancy indicator](https://data.worldbank.org/indicator/SP.DYN.LE00.IN), and [population indicator](https://data.worldbank.org/indicator/SP.POP.TOTL).
+
+### Sample construction
+
+The upstream cleaning process removes World Bank aggregate groups so that geographic or income-group totals do not appear alongside individual economies. This page reads the resulting `data/wdi_clean.csv`, checks required columns and duplicate economy-year identifiers, and retains observations with positive, finite GDP per capita, life expectancy, and population within 2000–2024. Because it uses the cleaned export, the page does not independently audit upstream aggregate removal.
+
+The resulting sample contains **`r fmt(nrow(wdi), 0)` economy-year observations, `r n_distinct(wdi$country)` economies, `r n_distinct(wdi$year)` years, and `r n_distinct(wdi$region)` regions**. Region labels follow the supplied cleaned dataset and are held fixed in this visualization; they should not be read as historical regional membership in every year.
+
+The panel may be unbalanced. To make sample coverage visible, the table below reports how many economies contribute observations each year.
+
+```{r}
+#| label: tbl-coverage
+#| tbl-cap: "Available observations by year after page-level validation."
+kable(annual %>% select(Year = year, Economies = economies))
+```
+
+All averages are arithmetic means across available economies or economy-year observations. An economy observed in more years receives more weight in the pooled results. The endpoint comparison uses only economies observed in both 2000 and 2024; the pandemic comparison uses a separate common sample observed in 2019, 2021, and 2024.
+
+### Analytical approach
+
+I report Pearson correlations in levels and log income, estimate a pooled log-linear regression, summarize regional patterns, and compare matched observations over time. GDP per capita is logged because incomes span a wide range. Equal horizontal distances on the log axis correspond to equal income ratios: moving from 2,000 to 4,000 is the same horizontal distance as moving from 20,000 to 40,000.
+
+These comparisons serve different purposes. The pooled model summarizes the overall income–health gradient. Matched year comparisons describe changes among the same economies. Neither approach, by itself, identifies causality.
+
+## Explore the Interactive Visualization
+
+```{r}
+#| label: fig-income-health
+#| fig-cap: "GDP per capita and life expectancy, 2000–2024. Each bubble is an economy; color identifies region and bubble size indicates population. Axes are fixed across years. Source: World Bank WDI, supplied cleaned export."
+# Keep economy identifiers and coordinate ranges stable across frames.
+plot_data <- wdi %>% mutate(
+  economy_id = country,
+  year = factor(year, levels = 2000:2024),
+  hover = paste0("<b>", country, "</b>",
+    "<br>Region: ", region, "<br>Year: ", year,
+    "<br>GDP per capita: ", fmt(gdp_per_capita, 0), " constant PPP int. $",
+    "<br>Life expectancy: ", fmt(life_expectancy, 1), " years",
+    "<br>Population: ", fmt(population_millions, 1), " million"))
+x_range <- range(log10(wdi$gdp_per_capita)) + c(-0.06, 0.06)
+y_range <- range(wdi$life_expectancy) + c(-2, 2)
+fig <- plot_ly(plot_data,
+  x = ~gdp_per_capita, y = ~life_expectancy,
+  ids = ~economy_id, frame = ~year, color = ~region,
+  size = ~population_millions, sizes = c(6, 55),
+  type = "scatter", mode = "markers", text = ~hover,
+  hoverinfo = "text", marker = list(opacity = 0.65)) %>%
+  layout(
+    xaxis = list(title = "GDP per capita (constant PPP int. $, log scale)",
+                 type = "log", range = x_range, autorange = FALSE),
+    yaxis = list(title = "Life expectancy at birth (years)",
+                 range = y_range, autorange = FALSE),
+    legend = list(orientation = "h", x = 0, y = 1.18, font = list(size = 10)),
+    margin = list(t = 120, b = 90), height = 650,
+    hovermode = "closest") %>%
+  animation_opts(frame = 700, transition = 0, redraw = TRUE) %>%
+  animation_slider(currentvalue = list(prefix = "Year: ")) %>%
+  config(responsive = TRUE, displaylogo = FALSE)
+fig
+```
+
+**How to use the chart:** Hover to identify an economy and read its values. Use Play or the year slider to change years. Click legend entries to hide or show regions; double-click an entry to isolate a region. Pause the animation before comparing exact values. If a bubble disappears, it may reflect missing data rather than a collapse in population or output.
+
+### What the interaction helps answer
+
+| Exploration | What to compare | Why it matters |
+|---|---|---|
+| Compare 2000 with 2024 | The position of the same named economy | Separates changes in income (horizontal) from changes in longevity (vertical) |
+| Isolate Sub-Saharan Africa | Malawi, Rwanda, Zimbabwe, and Burundi, when available | Tests whether economies in the same broad region follow similar development paths |
+| Compare 2019, 2021, and 2024 | Downward movement and subsequent recovery | Makes interruptions to long-run progress visible |
+| Hover over nearby income levels in one year | Differences in life expectancy | Reveals variation hidden by the overall positive association |
+
+A static image can show the income–health gradient for one year. The slider adds a second analytical question: **does a particular economy move along that gradient, mainly upward, mainly rightward, or temporarily backward?** Regional filtering reduces overlap, while hover connects an unusual position to an identifiable economy and precise values. The chart displays yearly positions rather than persistent country trails; comparing endpoints requires checking the same name in each year.
+
+## Results and Interpretation
+
+### 1. A strong global association is not a growth effect
+
+The correlation between GDP per capita and life expectancy is **`r fmt(r_level, 3)`**. Using log GDP per capita, the correlation is **`r fmt(r_log, 3)`**. The log transformation provides a more compact summary of the observed relationship when its correlation is stronger, but it does not prove a particular causal mechanism.
+
+The pooled regression is:
+
+$$
+LE_{it}=\alpha+\beta\ln(GDPpc_{it})+\varepsilon_{it},
+$$
+
+where $i$ identifies an economy, $t$ a year, $LE$ is life expectancy in years, and $GDPpc$ is real PPP GDP per capita. The error term includes all variation omitted from this simple model.
+
+The fitted relationship is:
+
+$$
+\widehat{LE}_{it}=`r fmt(b0, 3)`+`r fmt(b1, 3)`\ln(GDPpc_{it}),
+\qquad R^2=`r fmt(r2, 3)`.
+$$
+
+Across the pooled observations, a 1% income difference corresponds to approximately **`r fmt(b1 * log(1.01), 3)` years** of fitted life expectancy, and a doubling corresponds to **`r fmt(b1 * log(2), 2)` years**. These are model-based comparisons between observations, not predictions of what would happen if a government doubled an economy's income.
+
+The model accounts for approximately **`r fmt(100 * r2, 1)`%** of sample variation in life expectancy. This is descriptive fit, not the percentage of longevity caused by income. The regression mixes persistent differences between economies with changes within them and does not control for common time trends. No significance claims are made using conventional pooled standard errors because repeated observations within economies may be dependent.
+
+Economically, a log-linear specification allows the fitted gain from an additional dollar to become smaller as income rises:
+
+$$
+\frac{\partial\widehat{LE}}{\partial GDPpc}=\frac{\widehat\beta}{GDPpc}.
+$$
+
+This is a property of the fitted functional form. Improved access to basic necessities is one possible explanation, but the analysis does not directly test that mechanism.
+
+### 2. Regional gaps describe unequal outcomes, not their causes
+
+```{r}
+#| label: tbl-regions
+#| tbl-cap: "Unweighted regional averages across available economy-year observations, 2000–2024."
+kable(regional %>% transmute(Region = region, Economies = economies,
+  Observations = observations, `Mean life expectancy (years)` = round(mean_life, 2)))
+```
+
+The difference between the highest and lowest regional means is **`r fmt(max(regional$mean_life) - min(regional$mean_life), 2)` years**. This large gap makes the development question concrete: national output alone is an incomplete description of the human outcomes we want to compare.
+
+However, this table does not compare regions at equal income levels. Its gaps may reflect income differences, sample composition, and other conditions simultaneously. They cannot be interpreted as the independent effect of belonging to a region. Nor are these population-weighted estimates of the life expectancy of a typical resident.
+
+The regional legend is useful because it reveals the spread of economies within each region. A regional mean compresses that variation into one number; filtering and hovering let the reader inspect the economies behind it.
+
+### 3. Long-run progress survives a fixed endpoint comparison
+
+```{r}
+#| label: tbl-endpoints
+#| tbl-cap: "Matched endpoint comparison: the same economies in 2000 and 2024, equally weighted."
+kable(tibble(Indicator = c("Mean GDP per capita (constant PPP int. $)",
+                          "Mean life expectancy (years)"),
+             `2000` = c(fmt(early_gdp), fmt(early_life)),
+             `2024` = c(fmt(late_gdp), fmt(late_life))))
+```
+
+Among the **`r nrow(endpoints)` economies** observed at both endpoints, mean GDP per capita changed by **`r pct(100 * (late_gdp / early_gdp - 1))`**, while mean life expectancy changed by **`r fmt(late_life - early_life, 2)` years**. The GDP percentage is the change in the arithmetic mean, not the average of individual economies' percentage growth rates.
+
+Holding the economy sample fixed rules out changing endpoint membership as the explanation for this comparison. It does not show that income growth caused the longevity change. Common improvements in knowledge, health conditions, and other unmeasured factors could shift life expectancy over time, including at similar income levels.
+
+### 4. The pandemic comparison uses the same economies in all three years
+
+```{r}
+#| label: tbl-pandemic
+#| tbl-cap: "Pandemic-period comparison using economies with valid observations in all three selected years."
+kable(pandemic %>% transmute(Year = year, Economies = economies,
+  `Mean life expectancy (years)` = round(mean_life, 2)))
+```
+
+Within this common sample of **`r nrow(pandemic_ids)` economies**, average life expectancy changed by **`r fmt(p21 - p19, 2)` years between 2019 and 2021**, and by **`r fmt(p24 - p21, 2)` years between 2021 and 2024**. The 2024 average was **`r fmt(p24 - p19, 2)` years above the 2019 average** if this last difference is positive, and below it if negative.
+
+These calculations separate changes among the same economies from changes in sample membership. They describe the timing of a health disruption and subsequent movement; they do not isolate the pandemic's causal effect from every other event in those years. In the animation, inspecting these years also helps distinguish a temporary reversal from a long-run development trajectory.
+
+### 5. Similar health progress can accompany different income paths
+
+```{r}
+#| label: tbl-examples
+#| tbl-cap: "Selected illustrative endpoint changes, 2000–2024; these cases are not a representative sample."
+kable(examples %>% transmute(Economy = country,
+  `GDP per capita change` = pct(gdp_change),
+  `Life expectancy change (years)` = round(life_change, 2)))
+```
+
+These cases were chosen to examine the contrast between income growth and health improvement, rather than to estimate how common such contrasts are. Rwanda and Malawi provide comparisons with Zimbabwe and Burundi, whose reported endpoint patterns motivated a closer look. The table is recalculated from the CSV so that the discussion can be checked against the supplied data vintage.
+
+Where the table shows large longevity gains alongside limited or negative income growth, the key implication is that **income and health need not move proportionally within an economy**. In the chart, such a pattern appears as substantial upward movement with limited rightward movement, or even movement to the left.
+
+A large gain from a low starting point may also represent recovery from unusually adverse initial conditions. An endpoint difference alone cannot distinguish sustained gradual improvement from recovery, interruption, or reversal. The intervening years in the slider are therefore substantively useful, rather than simply decorative.
+
+Potential explanations include changes in disease burdens, prevention, healthcare access, or the effectiveness of public spending. They remain hypotheses: none of these mechanisms is measured or identified by the current model.
+
+## What These Patterns Mean for Economic Development
+
+The pooled income–health gradient and the individual trajectories answer different questions. The gradient asks whether richer observations tend to have better health outcomes. The trajectories ask whether a particular economy's health progress accompanies its income growth. A strong answer to the first question does not guarantee a proportional relationship in the second.
+
+This distinction also sharpens the interpretation of GDP per capita. Average output captures the resources potentially available to improve living conditions, but it does not show who receives those resources or how effectively they translate into health. Two economies with similar average income may have different access to essential services or different exposure to health risks. The visualization can reveal those differences; explaining their causes requires additional data and research design.
+
+The policy implication is consequently about **measurement and diagnosis**. Tracking GDP alongside life expectancy can reveal when economic gains coexist with limited health progress, or when health improves despite weak income growth. Such divergences help identify questions worth investigating. They do not establish which specific policy should be adopted.
+
+Bubble size adds another perspective: a pattern affecting a populous economy has different population implications from one affecting a small economy. Nevertheless, visually prominent bubbles do not alter the equal-economy weighting used in the statistics. The average economy's outcome and the average person's outcome are different quantities.
+
+## Limitations
+
+- **Causality and reverse causality:** Income may support health, while better health may support productivity. Omitted conditions and common trends can influence both.
+- **Pooled versus within-economy variation:** The regression combines between-economy and within-economy information. It is not a fixed-effects estimate of a growth–health relationship.
+- **Missingness and selection:** Matched comparisons improve comparability but exclude economies without the required years. Missing observations may be systematic.
+- **Weighting:** The analysis gives equal weight to available economy-year records, not people. Large bubbles are a display choice, not regression weights.
+- **Aggregation:** National averages conceal differences within economies, and regional averages conceal differences among economies.
+- **Measurement and revisions:** Results depend on the supplied WDI vintage, upstream cleaning, and fixed regional classification. The export metadata should accompany the raw data.
+- **Illustrative cases and endpoint selection:** Selected economies highlight exceptions without measuring their prevalence. Endpoints can conceal intermediate shocks, which should be inspected with the slider.
+
+## Conclusion
+
+The central finding is that **the global income–health relationship is informative about differences in living standards, but it is not a reliable roadmap for how individual economies achieve longer lives**. The pooled regression shows a strong association: log GDP per capita and life expectancy have a correlation of approximately 0.825, and the model accounts for about 68.1% of the observed variation in longevity. However, this fit combines differences between economies with changes within them. It cannot establish that an economy becoming richer will follow the same path implied by the global regression.
+
+The matched comparison of 189 economies clarifies this distinction. Between 2000 and 2024, their mean GDP per capita increased by approximately 44.0%, while mean life expectancy increased by 6.61 years. Because the same economies appear at both endpoints, these improvements cannot be attributed simply to changes in sample membership. Nevertheless, simultaneous increases in income and longevity do not reveal how much of the health improvement resulted from economic growth. The comparison establishes broad progress; the individual trajectories show why explaining that progress requires more than a single income coefficient.
+
+Malawi and Rwanda illustrate this point particularly clearly. They recorded similar longevity gains—approximately 21.39 and 20.22 years—despite markedly different GDP per capita increases of 31.9% and 215.1%. Zimbabwe gained approximately 17.03 years of life expectancy while measured GDP per capita declined by 15.5%, and Burundi gained 16.20 years alongside income growth of only 1.7%. These selected cases do not establish how common such divergences are, but they demonstrate a consequential limitation of income-based comparisons: **ranking economies by GDP growth can produce a different assessment of development from ranking them by improvements in survival**. Substantial human progress can be overlooked when output growth is the only measure considered.
+
+These divergences also raise an important interpretive question: does a large longevity gain represent sustained improvement, recovery from unusually adverse initial conditions, or a combination of both? A 24-year endpoint difference cannot distinguish these processes. This is where the interactive visualization contributes to the analysis. Examining intermediate years allows readers to assess whether health gains accompany income growth, occur with little horizontal movement, or follow earlier setbacks. The pandemic-period observations further emphasize why this distinction matters: a favorable long-run endpoint can conceal substantial losses along the way. Development should therefore be evaluated through both its cumulative gains and the stability of the path taken to achieve them.
+
+The regional results add a complementary perspective. The approximately 20.44-year difference between the reported North American and Sub-Saharan African averages shows the scale of unequal health outcomes, but it does not identify their causes or represent a comparison at equal income. Together with the economy-level cases, this suggests a useful distinction between the resources an economy possesses and the health outcomes associated with those resources. GDP per capita measures average output; it does not directly measure access to care, the distribution of resources, or exposure to disease. Differences in these conditions are plausible explanations for divergent outcomes, but testing them would require additional variables and a research design beyond this descriptive analysis.
+
+The practical implication is to use the income–health relationship as a starting point for diagnosis rather than a formula for predicting health gains. Where income rises without comparable longevity improvements, the next question concerns what prevents economic resources from translating into better health. Where longevity improves despite weak income growth, the next question concerns whether the gains reflect recovery, changing health risks, or improvements in service provision. These are different development problems, even if a single regression places them on the same global curve.
+
+**Economic growth is an important dimension of development, but its success should also be assessed through the human outcomes that accompany it.** This analysis shows why both levels and trajectories matter: richer economies generally have longer lives, yet the magnitude and timing of health progress cannot be inferred from income growth alone. Evaluating GDP alongside longevity—and examining interruptions and exceptions rather than averaging them away—provides a more informative account of development than either indicator can provide by itself.
+
+
+## References
+
+World Bank. [World Development Indicators](https://databank.worldbank.org/source/world-development-indicators).
+
+World Bank. Indicator definitions: [GDP per capita, PPP, constant international dollars](https://data.worldbank.org/indicator/NY.GDP.PCAP.PP.KD); [life expectancy at birth](https://data.worldbank.org/indicator/SP.DYN.LE00.IN); [population, total](https://data.worldbank.org/indicator/SP.POP.TOTL).
+
+Plotly. [Plotly R documentation](https://plotly.com/r/).

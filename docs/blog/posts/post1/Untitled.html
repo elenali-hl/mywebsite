@@ -6,6 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Elena Li">
 <meta name="dcterms.date" content="2026-09-14">
 
 <title>How Can the Same Data Tell Two Different Stories? Understanding Simpson’s Paradox – Student Name</title>
@@ -105,7 +106,7 @@ window.Quarto = {
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -149,7 +150,21 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction-why-an-overall-average-can-change-a-decision" id="toc-introduction-why-an-overall-average-can-change-a-decision" class="nav-link active" data-scroll-target="#introduction-why-an-overall-average-can-change-a-decision">Introduction: Why an Overall Average Can Change a Decision</a></li>
+  <li><a href="#a-simple-example-two-treatments-different-patients" id="toc-a-simple-example-two-treatments-different-patients" class="nav-link" data-scroll-target="#a-simple-example-two-treatments-different-patients">A Simple Example: Two Treatments, Different Patients</a></li>
+  <li><a href="#why-does-the-comparison-reverse" id="toc-why-does-the-comparison-reverse" class="nav-link" data-scroll-target="#why-does-the-comparison-reverse">Why Does the Comparison Reverse?</a></li>
+  <li><a href="#visualizing-the-paradox" id="toc-visualizing-the-paradox" class="nav-link" data-scroll-target="#visualizing-the-paradox">Visualizing the Paradox</a></li>
+  <li><a href="#a-more-comparable-summary-use-the-same-patient-mix" id="toc-a-more-comparable-summary-use-the-same-patient-mix" class="nav-link" data-scroll-target="#a-more-comparable-summary-use-the-same-patient-mix">A More Comparable Summary: Use the Same Patient Mix</a></li>
+  <li><a href="#what-do-these-results-tell-us" id="toc-what-do-these-results-tell-us" class="nav-link" data-scroll-target="#what-do-these-results-tell-us">What Do These Results Tell Us?</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
@@ -166,6 +181,12 @@ window.Quarto = {
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Elena Li </p>
+          </div>
+  </div>
     
     <div>
     <div class="quarto-title-meta-heading">Published</div>
@@ -182,89 +203,193 @@ window.Quarto = {
 </header>
 
 
-<section id="abstract" class="level2">
-<h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
-<p>Simpson’s Paradox is a statistical phenomenon in which a relationship observed within separate groups can change or even reverse when the groups are combined. This blog explains the intuition behind the paradox using a simple example of two medical treatments. The example shows how differences in the composition of groups can cause aggregate data to tell a very different story from the data within individual groups.</p>
+<section id="introduction-why-an-overall-average-can-change-a-decision" class="level2">
+<h2 class="anchored" data-anchor-id="introduction-why-an-overall-average-can-change-a-decision">Introduction: Why an Overall Average Can Change a Decision</h2>
+<p>Suppose a hospital must choose which of two treatments to recommend. Treatment B has an overall success rate of 74%, compared with only 36% for Treatment A. Choosing B seems straightforward. But what if Treatment A has a higher success rate among both mild and severe patients?</p>
+<p>This question matters because averages often guide real decisions. Hospitals compare treatments, companies evaluate sales teams, and policymakers assess employment programs. Yet the people served by each treatment, team, or program may differ. A program serving people who face greater barriers could have a lower overall success rate even if its observed results are stronger within comparable groups. Evaluating performance using only the overall rate could therefore reward a favorable case mix.</p>
+<p>This post asks: <strong>How can one treatment have a higher success rate within every patient group, yet a lower success rate overall?</strong> A simple hypothetical example illustrates Simpson’s Paradox and shows why we need to understand who is included in an average before using it to make a decision.</p>
 </section>
-<section id="introduction" class="level2">
-<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>When we look at data, we often expect the numbers to give us a clear answer. If Treatment A has a higher success rate than Treatment B for different groups of patients, it seems reasonable to conclude that Treatment A is better. However, this conclusion can change when we combine the groups together.</p>
-<p>This surprising situation is called <strong>Simpson’s Paradox</strong>. Simpson’s Paradox occurs when a relationship appears in several separate groups but changes or even reverses when the groups are combined. The mathematics behind it is not necessarily difficult. What makes the paradox unintuitive is that the way we group the data can change the conclusion we draw from it.</p>
+<section id="a-simple-example-two-treatments-different-patients" class="level2">
+<h2 class="anchored" data-anchor-id="a-simple-example-two-treatments-different-patients">A Simple Example: Two Treatments, Different Patients</h2>
+<p>Simpson’s Paradox occurs when the direction of an association within separate groups reverses when those groups are combined.</p>
+<p>Suppose patients are classified as having mild or severe conditions <strong>before treatment</strong>. <a href="#tbl-treatment-outcomes" class="quarto-xref">Table&nbsp;1</a> presents the example. <strong>All patient counts are hypothetical and constructed for this explanation; they do not come from an actual medical study.</strong> A success rate is the number of successful outcomes divided by the number of patients receiving that treatment in the relevant group.</p>
+<div id="tbl-treatment-outcomes" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-treatment-outcomes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1: Hypothetical patient counts and observed success rates by treatment and severity. Source: constructed illustrative example; percentages calculated from the displayed counts.
+</figcaption>
+<div aria-describedby="tbl-treatment-outcomes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 28%">
+<col style="width: 13%">
+<col style="width: 28%">
+<col style="width: 13%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Patient severity</th>
+<th style="text-align: right;">A: successful outcomes / patients</th>
+<th style="text-align: right;">A success rate</th>
+<th style="text-align: right;">B: successful outcomes / patients</th>
+<th style="text-align: right;">B success rate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Mild</td>
+<td style="text-align: right;">90 / 100</td>
+<td style="text-align: right;">90%</td>
+<td style="text-align: right;">720 / 900</td>
+<td style="text-align: right;">80%</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Severe</td>
+<td style="text-align: right;">270 / 900</td>
+<td style="text-align: right;">30%</td>
+<td style="text-align: right;">20 / 100</td>
+<td style="text-align: right;">20%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Overall</strong></td>
+<td style="text-align: right;"><strong>360 / 1,000</strong></td>
+<td style="text-align: right;"><strong>36%</strong></td>
+<td style="text-align: right;"><strong>740 / 1,000</strong></td>
+<td style="text-align: right;"><strong>74%</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>Within each severity group, Treatment A has the higher observed success rate:</p>
+<ul>
+<li><strong>Mild cases:</strong> 90% for A versus 80% for B.</li>
+<li><strong>Severe cases:</strong> 30% for A versus 20% for B.</li>
+</ul>
+<p>In both groups, A’s advantage is <strong>10 percentage points</strong>. However, combining the patients produces the opposite ranking.</p>
+<p>For Treatment A, the overall success rate is</p>
+<p><span class="math display">\[
+p_A = \frac{90 + 270}{100 + 900}
+= \frac{360}{1{,}000} = 36\%.
+\]</span></p>
+<p>For Treatment B, it is</p>
+<p><span class="math display">\[
+p_B = \frac{720 + 20}{900 + 100}
+= \frac{740}{1{,}000} = 74\%.
+\]</span></p>
+<p>Thus, A has the higher success rate in both severity groups, while B has the higher overall success rate. Both calculations are correct. The reversal occurs because the overall rates summarize populations with different compositions.</p>
 </section>
-<section id="a-simple-example" class="level2">
-<h2 class="anchored" data-anchor-id="a-simple-example">A Simple Example</h2>
-<p>Suppose a hospital is comparing two treatments, Treatment A and Treatment B. Patients can be divided into two groups: mild cases and severe cases.</p>
-<p>For mild cases, suppose Treatment A has a success rate of <span class="math inline">\(90%\)</span>, while Treatment B has a success rate of <span class="math inline">\(80%\)</span>. Therefore, Treatment A performs better:</p>
+<section id="why-does-the-comparison-reverse" class="level2">
+<h2 class="anchored" data-anchor-id="why-does-the-comparison-reverse">Why Does the Comparison Reverse?</h2>
+<p>The key difference is <strong>who receives each treatment</strong>. Of A’s patients, 90% are severe cases. Of B’s patients, only 10% are severe cases. Severe patients have lower success rates under either treatment, so treating a larger proportion of severe patients lowers the overall rate.</p>
+<p>An overall success rate is a weighted average:</p>
 <p><span class="math display">\[
-90\% &gt; 80\%.
+p_T = w_{T,m}p_{T,m} + w_{T,s}p_{T,s},
+\qquad w_{T,m}+w_{T,s}=1.
 \]</span></p>
-<p>For severe cases, suppose Treatment A has a success rate of <span class="math inline">\(30%\)</span>, while Treatment B has a success rate of <span class="math inline">\(20%\)</span>. Again, Treatment A performs better:</p>
+<p>Here, <span class="math inline">\(T\)</span> identifies the treatment, <span class="math inline">\(m\)</span> denotes mild cases, and <span class="math inline">\(s\)</span> denotes severe cases. The term <span class="math inline">\(p_{T,g}\)</span> is the success rate for treatment <span class="math inline">\(T\)</span> in group <span class="math inline">\(g\)</span>, while <span class="math inline">\(w_{T,g}\)</span> is that group’s share of the treatment’s patients.</p>
+<p>For Treatment A,</p>
 <p><span class="math display">\[
-30\% &gt; 20\%.
+p_A = 0.10(0.90) + 0.90(0.30) = 0.36.
 \]</span></p>
-<p>At this point, it seems obvious that Treatment A is the better treatment.</p>
-<p>However, suppose the number of patients receiving each treatment is very different. Treatment A is used mostly for severe cases, while Treatment B is used mostly for mild cases.</p>
-<p>For Treatment A, suppose there are 100 mild cases and 900 severe cases. Its overall success rate is</p>
+<p>For Treatment B,</p>
 <p><span class="math display">\[
-\frac{100(0.90)+900(0.30)}{1000}
-=0.36
-=36\%.
+p_B = 0.90(0.80) + 0.10(0.20) = 0.74.
 \]</span></p>
-<p>For Treatment B, suppose there are 900 mild cases and 100 severe cases. Its overall success rate is</p>
-<p><span class="math display">\[
-\frac{900(0.80)+100(0.20)}{1000}
-=0.74
-=74\%.
-\]</span></p>
-<p>Now we get a surprising result. Treatment A performs better in both patient groups, but Treatment B has the higher overall success rate:</p>
-<p><span class="math display">\[
-36\% &lt; 74\%.
-\]</span></p>
-<p>This is the key feature of Simpson’s Paradox.</p>
-</section>
-<section id="why-does-this-happen" class="level2">
-<h2 class="anchored" data-anchor-id="why-does-this-happen">Why Does This Happen?</h2>
-<p>The key is that the two treatments have different proportions of mild and severe patients.</p>
-<p>Mild patients are easier to treat, so having more mild patients naturally increases a treatment’s overall success rate. Treatment B has mostly mild patients, while Treatment A has mostly severe patients.</p>
-<p>Therefore, the overall success rates are not simply comparing the quality of the two treatments. They are also reflecting the different compositions of the patient groups.</p>
-<p>In other words, the overall success rate is a weighted average of the success rates in the different groups. The weights are determined by how many patients belong to each group.</p>
-<p>For Treatment A, the calculation is</p>
-<p><span class="math display">\[
-0.10(90\%) + 0.90(30\%) = 36\%.
-\]</span></p>
-<p>For Treatment B, the calculation is</p>
-<p><span class="math display">\[
-0.90(80\%) + 0.10(20\%) = 74\%.
-\]</span></p>
-<p>These calculations show why the overall comparison can be different from the comparisons within each group.</p>
-<p>This is the main intuition behind Simpson’s Paradox: an aggregate result can hide what is happening inside individual groups.</p>
+<p>B’s overall rate places much more weight on mild cases, where success is more common. A’s rate places much more weight on severe cases, where success is less common. These different weights are large enough to reverse the observed within-group ranking.</p>
+<p>The paradox does not require a mistake in the arithmetic. <strong>The overall comparison combines differences in success rates with differences in patient composition.</strong> Reporting success rates alongside the underlying patient counts makes this mechanism visible.</p>
 </section>
 <section id="visualizing-the-paradox" class="level2">
 <h2 class="anchored" data-anchor-id="visualizing-the-paradox">Visualizing the Paradox</h2>
-<p>We can visualize the success rates of the two treatments. Figure <a href="#fig-success-rates" class="quarto-xref">Figure&nbsp;1</a> shows the success rates for mild cases, severe cases, and the overall population.</p>
+<p><a href="#fig-success-rates" class="quarto-xref">Figure&nbsp;1</a> compares the observed success rates for mild cases, severe cases, and all patients combined.</p>
 <div id="fig-success-rates" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-success-rates-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="figure1.png" class="img-fluid figure-img" style="width:85.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-success-rates-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: Success Rates for Treatments A and B
+Figure&nbsp;1: Observed success rates for Treatments A and B in the hypothetical example. Treatment A has the higher success rate within both severity groups, while Treatment B has the higher overall rate. Source: constructed example in <a href="#tbl-treatment-outcomes" class="quarto-xref">Table&nbsp;1</a>.
 </figcaption>
 </figure>
 </div>
-<p>The figure shows the paradox clearly. Within both the mild and severe groups, Treatment A has a higher success rate than Treatment B. However, when we look at the overall data, Treatment B has a much higher success rate.</p>
+<p>The figure makes the reversal visible: A leads B by 10 percentage points among both mild and severe patients, yet B leads A by 38 percentage points overall. The overall bars summarize different patient mixes, so they do not represent a comparison holding severity composition fixed. Read alongside the patient counts in <a href="#tbl-treatment-outcomes" class="quarto-xref">Table&nbsp;1</a>, the figure shows both the reversal and why it occurs.</p>
 </section>
-<section id="why-should-we-care" class="level2">
-<h2 class="anchored" data-anchor-id="why-should-we-care">Why Should We Care?</h2>
-<p>Simpson’s Paradox is important because aggregate statistics are common in economics, business, medicine, and many other fields. Looking only at an overall average can sometimes lead to a misleading conclusion.</p>
-<p>For example, when comparing two policies, companies, schools, or economic outcomes, we should consider whether important groups have different characteristics. A difference in the overall data may partly reflect differences in the composition of the groups rather than a true difference in performance.</p>
-<p>This does not mean that aggregate statistics are always wrong. Instead, it means that we should understand what is behind an aggregate number before using it to make a conclusion.</p>
+<section id="a-more-comparable-summary-use-the-same-patient-mix" class="level2">
+<h2 class="anchored" data-anchor-id="a-more-comparable-summary-use-the-same-patient-mix">A More Comparable Summary: Use the Same Patient Mix</h2>
+<p>We can examine the role of patient composition by applying the same weights to both treatments. This calculation is called standardization.</p>
+<p>Suppose the population of interest consists of 50% mild and 50% severe patients. Using that common patient mix gives</p>
+<p><span class="math display">\[
+p_A^{\text{standardized}}
+= 0.50(0.90) + 0.50(0.30) = 60\%,
+\]</span></p>
+<p>and</p>
+<p><span class="math display">\[
+p_B^{\text{standardized}}
+= 0.50(0.80) + 0.50(0.20) = 50\%.
+\]</span></p>
+<div id="tbl-standardized-rates" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-standardized-rates-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2: Observed and standardized success rates in the hypothetical example. Standardized rates apply a common patient composition to the within-group rates.
+</figcaption>
+<div aria-describedby="tbl-standardized-rates-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 26%">
+<col style="width: 26%">
+<col style="width: 22%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Comparison</th>
+<th style="text-align: right;">Treatment A</th>
+<th style="text-align: right;">Treatment B</th>
+<th style="text-align: right;">A minus B</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Observed overall rate: different patient mixes</td>
+<td style="text-align: right;">36%</td>
+<td style="text-align: right;">74%</td>
+<td style="text-align: right;">−38 percentage points</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Standardized rate: 50% mild, 50% severe for both</td>
+<td style="text-align: right;">60%</td>
+<td style="text-align: right;">50%</td>
+<td style="text-align: right;">+10 percentage points</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>With the same patient mix, A has the higher standardized success rate. These are calculated summaries, not additional observed outcomes.</p>
+<p>The equal weights are illustrative. An actual analysis should choose weights that represent the population relevant to the decision. In this particular example, however, A retains its 10-percentage-point advantage under <strong>any common weighting</strong> of the two groups. If <span class="math inline">\(w\)</span> is the common share of mild cases, then</p>
+<p><span class="math display">\[
+p_A^{\text{standardized}}-p_B^{\text{standardized}}
+=w(0.90-0.80)+(1-w)(0.30-0.20)
+=0.10.
+\]</span></p>
+<p>This result follows because A’s observed advantage is exactly 10 percentage points in each group. It helps explain why the original overall ranking reflects the unequal patient mixes so strongly.</p>
+</section>
+<section id="what-do-these-results-tell-us" class="level2">
+<h2 class="anchored" data-anchor-id="what-do-these-results-tell-us">What Do These Results Tell Us?</h2>
+<p>The aggregate and subgroup comparisons answer different questions.</p>
+<p>The <strong>overall rates</strong> describe outcomes among the patients who actually received each treatment. They correctly report that 74% of B’s patients succeeded, compared with 36% of A’s patients. These figures are useful for describing the observed patient populations.</p>
+<p>The <strong>subgroup rates</strong> compare outcomes among patients in the same broad severity category. The <strong>standardized rates</strong> summarize those comparisons using a common patient composition. They are more informative when the aim is to compare observed success rates while holding the severity mix fixed.</p>
+<p>However, these comparisons do not establish that A causes better outcomes. Even within a severity category, patients receiving A and B might differ in age, other health conditions, or access to care. A causal conclusion would require an appropriate research design and attention to those differences. Standardizing for severity alone does not solve every comparability problem.</p>
+<p>Nor should we automatically divide every dataset into more groups. The useful grouping depends on the question and how the variables relate to treatment and outcomes. In this example, severity is measured before treatment and is relevant to the outcome comparison.</p>
 </section>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
-<p>Simpson’s Paradox shows that the same data can tell different stories depending on how we group it. A result that appears true in the aggregate may disappear or even reverse when we examine smaller groups.</p>
-<p>The important lesson is simple: before drawing conclusions from aggregate data, we should look inside the groups that make up that data.</p>
-<hr>
+<p>The same data can support different descriptive comparisons without any arithmetic contradiction. Treatment A has a higher observed success rate within both severity groups, but Treatment B has a higher overall rate because its patients are predominantly mild cases. Applying the same patient mix gives standardized rates of 60% for A and 50% for B.</p>
+<p>The practical implication extends beyond this example. A hospital, business, or public program serving more difficult cases can look worse in the aggregate even when its observed results are stronger within comparable groups. An overall ranking alone may therefore be a poor basis for evaluating performance.</p>
+<p><strong>Before acting on an average, ask who is included, whether the groups have different compositions, and which comparison answers the decision at hand.</strong> Understanding the population behind a statistic is as important as calculating the statistic correctly.</p>
 
 
 </section>

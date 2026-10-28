@@ -365,7 +365,7 @@ window.Quarto = {
 <p>Python’s built-in <code>sqlite3</code> package runs SQL without requiring a separate database server.</p>
 <p>The following teaching example illustrates the key operations. It assumes that the earlier cleaning steps produced DataFrames <code>pid_df</code> and <code>individual_df</code> with the original PSID identifier columns.</p>
 <p>The complete executable pipeline is in <code>code/03_sql_matching.py</code>.</p>
-<div id="5b44d19f" class="cell" data-execution_count="1">
+<div id="f510d9af" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sqlite3</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -457,7 +457,7 @@ LEFT JOIN family_income_long AS f
 <h2 class="anchored" data-anchor-id="group-by-and-aggregation-construct-multi-year-earnings">4. GROUP BY and Aggregation: Construct Multi-Year Earnings</h2>
 <p>A single observed earnings year may reflect a temporary shock.</p>
 <p>We therefore construct a second earnings measure: each person’s average observed positive labor earnings across the four income reference years.</p>
-<div id="20cbafb4" class="cell" data-execution_count="2">
+<div id="04470eea" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># income_panel is the cleaned person-year earnings DataFrame.</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> sqlite3.<span class="ex">connect</span>(<span class="st">":memory:"</span>) <span class="im">as</span> conn:</span>

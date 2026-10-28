@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Elena Li">
+<meta name="dcterms.date" content="2026-10-06">
+
+<title>Priced Out? How U.S. Housing Affordability Has Changed Since 2000 – Student Name</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-6033a600180109c3731f6a886c29932c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Student Name</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../bio.html"> 
+<span class="menu-text">About Me</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../resume.html"> 
+<span class="menu-text">Resume</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../blog/index.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#data-and-method" id="toc-data-and-method" class="nav-link" data-scroll-target="#data-and-method">Data and Method</a></li>
+  <li><a href="#home-prices-have-outpaced-household-income" id="toc-home-prices-have-outpaced-household-income" class="nav-link" data-scroll-target="#home-prices-have-outpaced-household-income">Home Prices Have Outpaced Household Income</a></li>
+  <li><a href="#falling-mortgage-rates-initially-helped-buyers" id="toc-falling-mortgage-rates-initially-helped-buyers" class="nav-link" data-scroll-target="#falling-mortgage-rates-initially-helped-buyers">Falling Mortgage Rates Initially Helped Buyers</a></li>
+  <li><a href="#combining-home-prices-mortgage-rates-and-income" id="toc-combining-home-prices-mortgage-rates-and-income" class="nav-link" data-scroll-target="#combining-home-prices-mortgage-rates-and-income">Combining Home Prices, Mortgage Rates, and Income</a></li>
+  <li><a href="#the-affordability-shock-after-2021" id="toc-the-affordability-shock-after-2021" class="nav-link" data-scroll-target="#the-affordability-shock-after-2021">The Affordability Shock After 2021</a></li>
+  <li><a href="#lower-home-prices-do-not-necessarily-mean-affordable-homes" id="toc-lower-home-prices-do-not-necessarily-mean-affordable-homes" class="nav-link" data-scroll-target="#lower-home-prices-do-not-necessarily-mean-affordable-homes">Lower Home Prices Do Not Necessarily Mean Affordable Homes</a></li>
+  <li><a href="#what-do-the-three-figures-tell-us" id="toc-what-do-the-three-figures-tell-us" class="nav-link" data-scroll-target="#what-do-the-three-figures-tell-us">What Do the Three Figures Tell Us?</a></li>
+  <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations">Limitations</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Priced Out? How U.S. Housing Affordability Has Changed Since 2000</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">data visualization</div>
+    <div class="quarto-category">housing</div>
+    <div class="quarto-category">economics</div>
+  </div>
+  </div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Elena Li </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">October 6, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>Buying a home is one of the largest financial decisions many households make. But whether a home is affordable depends on more than its price. Household income determines how much a family can reasonably spend, while mortgage rates determine the cost of borrowing. A home can therefore become harder to afford even if its price is no longer rising, especially when interest rates increase.</p>
+<p>This raises the question:</p>
+<p><strong>How has housing affordability in the United States changed as home prices, mortgage rates, and household incomes have evolved since 2000?</strong></p>
+<p>To explore this question, I use U.S. housing, mortgage, and income data from Federal Reserve Economic Data (FRED) covering 2000 through 2025. I focus on three parts of the affordability story. First, I compare the growth of home prices with household income. Second, I examine changes in mortgage rates. Finally, I combine home prices, borrowing costs, and income into a simplified measure of mortgage burden.</p>
+<p>Together, these three perspectives show that housing affordability cannot be understood from home prices alone.</p>
+</section>
+<section id="data-and-method" class="level2">
+<h2 class="anchored" data-anchor-id="data-and-method">Data and Method</h2>
+<p>I collected four series programmatically from FRED using the <code>fredr</code> package in R:</p>
+<ul>
+<li>the S&amp;P Cotality Case-Shiller U.S. National Home Price Index (<code>CSUSHPINSA</code>);</li>
+<li>the 30-Year Fixed Rate Mortgage Average in the United States (<code>MORTGAGE30US</code>);</li>
+<li>Median Household Income in the United States (<code>MEHOINUSA646N</code>); and</li>
+<li>the Median Sales Price of New Houses Sold for the United States (<code>MSPUS</code>).</li>
+</ul>
+<p>These series are reported at different frequencies. The home price index is monthly, mortgage rates are weekly, median new-home sale prices are quarterly, and household income is annual. To make the series comparable, I converted them to annual observations. I calculated annual averages for the home price index, mortgage rate, and median new-home sale price, while household income was already available annually.</p>
+<p>For the first comparison, I reindexed both home prices and household income so that their annual values in 2000 equal 100. This allows the two series to be compared in terms of relative growth even though they are originally measured in different units.</p>
+</section>
+<section id="home-prices-have-outpaced-household-income" class="level2">
+<h2 class="anchored" data-anchor-id="home-prices-have-outpaced-household-income">Home Prices Have Outpaced Household Income</h2>
+<p>The first part of the affordability story is the relationship between home prices and household income.</p>
+<p><img src="figure1_price_vs_income.png" class="img-fluid" style="width:100.0%" alt="Line chart comparing the U.S. home price index and median household income, both indexed to 2000 equals 100, from 2000 to 2025."></p>
+<p>Both series begin at 100 in 2000, but they follow increasingly different paths over the next 25 years.</p>
+<p>Home prices increased rapidly during the early 2000s, reaching an indexed value of roughly 176 in 2006 before declining during and after the housing market downturn. Household income grew much more gradually over the same period.</p>
+<p>The gap became especially pronounced after 2020. By 2025, the home price index had reached approximately <strong>314</strong>, compared with about <strong>208</strong> for median household income.</p>
+<p>In other words, relative to their 2000 levels, home prices more than tripled while nominal median household income roughly doubled. The comparison suggests that the price of housing has increased substantially faster than the income available to purchase it.</p>
+<p>However, this price-income gap does not provide a complete measure of affordability. Most buyers finance at least part of a home purchase with a mortgage. As a result, the interest rate attached to that mortgage can substantially change the monthly cost of purchasing the same home.</p>
+</section>
+<section id="falling-mortgage-rates-initially-helped-buyers" class="level2">
+<h2 class="anchored" data-anchor-id="falling-mortgage-rates-initially-helped-buyers">Falling Mortgage Rates Initially Helped Buyers</h2>
+<p>The second figure adds the cost of borrowing to the story.</p>
+<p><img src="figure2_mortgage_rate.png" class="img-fluid" style="width:100.0%" alt="Line chart showing the annual average U.S. 30-year fixed mortgage rate from 2000 to 2025."></p>
+<p>Mortgage rates generally declined over the first two decades of the period. The annual average 30-year fixed mortgage rate was approximately <strong>8.05% in 2000</strong>. By 2010, it had fallen to about <strong>4.69%</strong>, and it reached approximately <strong>2.96% in 2021</strong>.</p>
+<p>This decline matters for affordability because a lower interest rate reduces the monthly principal-and-interest payment associated with a given mortgage balance. In other words, falling rates helped offset some of the affordability pressure created by rising home prices.</p>
+<p>The situation changed dramatically after 2021.</p>
+<p>The annual average mortgage rate increased from <strong>2.96% in 2021</strong> to <strong>5.34% in 2022</strong>, and then to <strong>6.81% in 2023</strong>. Rates remained relatively high afterward, averaging about <strong>6.72% in 2024</strong> and <strong>6.60% in 2025</strong>.</p>
+<p>This sharp increase shows why looking only at home prices can be misleading. Even if the price of a home stays constant, financing that home becomes substantially more expensive when mortgage rates rise.</p>
+<p>The next step is therefore to combine these factors rather than examine them separately.</p>
+</section>
+<section id="combining-home-prices-mortgage-rates-and-income" class="level2">
+<h2 class="anchored" data-anchor-id="combining-home-prices-mortgage-rates-and-income">Combining Home Prices, Mortgage Rates, and Income</h2>
+<p>To capture the interaction between prices, interest rates, and income, I constructed a simplified measure of <strong>estimated mortgage burden</strong>.</p>
+<p>For each year, I assume that a household purchases a median-priced new home with a <strong>20% down payment</strong> and finances the remaining 80% with a <strong>30-year fixed-rate mortgage</strong>. I use the annual average mortgage rate to calculate the monthly principal-and-interest payment.</p>
+<p>I then calculate:</p>
+<p><span class="math display">\[
+\text{Estimated Mortgage Burden}
+=
+\frac{\text{Annual Principal-and-Interest Payment}}
+{\text{Median Household Income}}
+\times 100
+\]</span></p>
+<p>A higher value means that the estimated mortgage payment would consume a larger share of median household income and therefore indicates lower affordability under these standardized assumptions.</p>
+<p><img src="figure3_mortgage_burden.png" class="img-fluid" style="width:100.0%" alt="Line chart showing estimated annual mortgage principal-and-interest payments as a percentage of median household income from 2000 to 2025."></p>
+<p>This figure reveals a pattern that is not obvious from home prices alone.</p>
+<p>In 2000, estimated mortgage burden was approximately <strong>28.3%</strong> of median household income. It increased to about <strong>30.4% in 2006</strong>, around the peak of the pre-financial-crisis housing boom.</p>
+<p>Afterward, the estimated burden generally declined. By 2012, it had fallen to approximately <strong>21.1%</strong>, and in 2020 it reached its lowest value in the sample at about <strong>19.8%</strong>.</p>
+<p>This is particularly interesting because homes in 2020 were much more expensive than they had been in 2000. The first figure shows that the home price index had already risen to roughly twice its 2000 level. Yet estimated mortgage burden was lower than in 2000.</p>
+<p>The mortgage-rate figure helps explain why. By 2020, the annual average 30-year mortgage rate had fallen to only about <strong>3.11%</strong>. Low borrowing costs partially offset the effect of higher home prices.</p>
+</section>
+<section id="the-affordability-shock-after-2021" class="level2">
+<h2 class="anchored" data-anchor-id="the-affordability-shock-after-2021">The Affordability Shock After 2021</h2>
+<p>The clearest change occurs between 2021 and 2023.</p>
+<p>Estimated mortgage burden increased from <strong>21.8% in 2021</strong> to <strong>31.1% in 2022</strong> and then reached <strong>33.1% in 2023</strong>, the highest value in the 2000–2025 period.</p>
+<p>That is an increase of approximately <strong>11.3 percentage points in just two years</strong>.</p>
+<p>The timing is important. Home prices had already risen sharply by 2021, but mortgage rates were still historically low. Once mortgage rates increased in 2022 and 2023, buyers faced both elevated home prices and much higher financing costs at the same time.</p>
+<p>For example, the annual average median new-home sale price was approximately <strong>$383,000 in 2021</strong>, with an average mortgage rate of <strong>2.96%</strong>. Under the standardized assumptions used here, the estimated monthly principal-and-interest payment was about <strong>$1,285</strong>.</p>
+<p>In 2023, the annual average median new-home sale price was approximately <strong>$426,525</strong> and the average mortgage rate had increased to <strong>6.81%</strong>. The estimated monthly payment rose to approximately <strong>$2,226</strong>.</p>
+<p>This means that the standardized monthly mortgage payment increased by roughly <strong>$941</strong>, or about <strong>73%</strong>, between 2021 and 2023.</p>
+<p>Household income increased over the same period, but not enough to offset the combined effect of higher home prices and substantially higher interest rates. As a result, the estimated mortgage burden rose sharply.</p>
+</section>
+<section id="lower-home-prices-do-not-necessarily-mean-affordable-homes" class="level2">
+<h2 class="anchored" data-anchor-id="lower-home-prices-do-not-necessarily-mean-affordable-homes">Lower Home Prices Do Not Necessarily Mean Affordable Homes</h2>
+<p>The final years of the data provide another useful example.</p>
+<p>The annual average of quarterly median new-home sale prices declined from approximately <strong>$432,950 in 2022</strong> to <strong>$415,400 in 2025</strong>. At the same time, median household income continued to increase.</p>
+<p>These changes helped reduce estimated mortgage burden from its 2023 peak of 33.1% to <strong>29.1% in 2025</strong>.</p>
+<p>However, the burden remained considerably higher than the <strong>19.8% recorded in 2020</strong> and the <strong>21.8% recorded in 2021</strong>.</p>
+<p>The reason is that mortgage rates remained elevated. The average rate in 2025 was approximately <strong>6.60%</strong>, more than twice the 2021 average of 2.96%.</p>
+<p>This illustrates an important economic point: <strong>a decline in home prices does not automatically restore housing affordability</strong>. When borrowing costs remain high, buyers may still face large monthly payments even if home prices have fallen from their peak.</p>
+</section>
+<section id="what-do-the-three-figures-tell-us" class="level2">
+<h2 class="anchored" data-anchor-id="what-do-the-three-figures-tell-us">What Do the Three Figures Tell Us?</h2>
+<p>Taken together, the three visualizations tell a consistent story.</p>
+<p>First, <strong>home prices have grown substantially faster than median household income since 2000</strong>. By 2025, the home price index stood at roughly 314 relative to its 2000 level, compared with about 208 for household income.</p>
+<p>Second, <strong>falling mortgage rates helped offset some of this growing price-income gap for much of the 2000s and 2010s</strong>. This helps explain why the estimated mortgage burden could decline even while home prices were increasing.</p>
+<p>Third, <strong>the sharp rise in mortgage rates after 2021 removed much of that offset</strong>. Potential buyers were suddenly facing the combination of elevated home prices and much more expensive borrowing. The result was a rapid increase in estimated mortgage burden, which peaked at 33.1% in 2023.</p>
+<p>The analysis therefore suggests that housing affordability is best understood as the interaction of three factors:</p>
+<p><strong>home prices + borrowing costs + household income.</strong></p>
+<p>Looking at any one of these variables in isolation can miss an important part of the story.</p>
+</section>
+<section id="limitations" class="level2">
+<h2 class="anchored" data-anchor-id="limitations">Limitations</h2>
+<p>The estimated mortgage burden used in this analysis is a standardized measure rather than an official housing affordability index.</p>
+<p>Several assumptions are necessary to make the comparison consistent over time. The calculation assumes a 20% down payment and a 30-year fixed-rate mortgage. It also assumes that the buyer purchases a median-priced new home and receives the annual average mortgage rate.</p>
+<p>The calculation includes only mortgage principal and interest. It does not include property taxes, homeowners insurance, HOA fees, maintenance costs, closing costs, or other expenses associated with homeownership. Actual mortgage rates and down payments also vary across borrowers depending on factors such as credit history and financial circumstances.</p>
+<p>In addition, the dollar home-price series used in the mortgage calculation represents the median sales price of <strong>new houses sold</strong>, rather than all existing and new homes in the United States.</p>
+<p>Finally, the household income series is measured in current dollars. The indexed comparison in the first figure therefore shows the relative growth of nominal household income and the home price index; it should not be interpreted as a measure of real income growth.</p>
+<p>Despite these limitations, applying the same assumptions in every year provides a useful standardized comparison of how the financial conditions facing a hypothetical homebuyer have changed over time.</p>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>Housing affordability in the United States has changed substantially since 2000, but the story is more complicated than simply saying that home prices increased.</p>
+<p>Home prices grew much faster than median household income, creating increasing pressure on affordability. For many years, however, declining mortgage rates partially offset that pressure by making it cheaper to finance a home. That changed after 2021, when mortgage rates rose rapidly while home prices remained elevated.</p>
+<p>Under the standardized assumptions used in this analysis, estimated mortgage burden increased from <strong>21.8% of median household income in 2021 to 33.1% in 2023</strong>. Although the burden declined to <strong>29.1% by 2025</strong>, it remained substantially above the levels observed during the low-rate years.</p>
+<p>The main takeaway is that <strong>housing affordability cannot be evaluated from home prices alone</strong>. What ultimately matters for a financed home purchase is not only the price of the house, but also the interest rate used to finance it and the income available to make the payments.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p><img src="../../../images/UniversityofPennsylvania_FullLogo_RGB.png" class="img-fluid" width="100"></p>
+</div>   
+    <div class="nav-footer-center">
+<p>© 2026 Student Name</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

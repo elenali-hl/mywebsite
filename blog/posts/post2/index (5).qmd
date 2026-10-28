@@ -1,0 +1,123 @@
+---
+title: "Which Book Categories Look Like Better Value? A Scraping Exercise"
+date: 2026-09-21
+categories: [web scraping, data analysis]
+format:
+  html:
+    toc: true
+    embed-resources: true
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+source("code/02-analysis.R", local = knitr::knit_global())
+```
+
+## A useful question, with a careful definition of value
+
+When choosing a book on a budget, a low price is useful only if the book also interests the reader. Can price and star ratings help narrow the search?
+
+> **Which book categories combine a below-average listed price with an above-average displayed rating in this catalogue?**
+
+Here, a **category** means a grouping assigned by the website, such as Humor, Mystery, Science, or Historical Fiction. Sequential Art is the site's label for a grouping that includes comics and graphic narratives. Categories describe how books are grouped; they are not groups of reviewers. Each observation in my data is one book listing, and each point in the figure below summarizes one category. I retain the website's labels, including broad labels such as Default, rather than reclassifying books myself.
+
+This question matters because a two-dimensional screen can reduce search effort: readers can examine price and rating together before comparing individual titles. However, “value” here is a descriptive screening rule, not a measurement of enjoyment per pound or an estimate of the effect of genre on satisfaction.
+
+**An essential qualification:** [Books to Scrape](https://books.toscrape.com/) states that its prices and ratings were randomly assigned and have no real meaning. This is therefore a demonstration of a reproducible decision tool, not evidence that any genre offers better real-world purchases. In addition, real review data would face reader selection, discussed below.
+
+## From web pages to a book-level dataset
+
+I use the original submitted snapshot, whose project files are dated September 21, 2026. The snapshot contains `r nrow(books_clean)` listings across `r nrow(category_summary)` categories. The date is the project date; the original files do not include a separate request-time log.
+
+The R scraper uses **rvest** to read the homepage's category links. Within each category it extracts the title, listed price, and star-rating class from each book card, then follows the next-page link until no further page remains. The category name comes from the category being visited. This avoids relying only on the first page of a large category.
+
+The original scraper pauses for 0.5 seconds between category-page requests and between categories. It accesses public practice pages, without login, private information, or access-control bypasses. Reproducing the analysis from the saved CSV files requires no new requests. Before any optional fresh collection, check the course's allowed-site and request rules and the site's current access guidance; the full course-specific restrictions were not supplied with this revision.
+
+Cleaning converts pound-denominated price strings to numbers and maps the classes One through Five to integers 1–5. The saved cleaned data contain no missing values in the four fields, all prices are positive, and all ratings lie between 1 and 5. One title appears twice. Because a title alone is not a unique product identifier, I retain these listings rather than silently discard one; future collection should save product URLs to distinguish editions from duplicate captures.
+
+## How the comparison works
+
+For each category, I calculate the number of listings, mean price, median price, and mean displayed rating. Each listing receives equal weight. The ratings are treated as a convenient numerical summary; averaging a 1–5 scale does not establish that the subjective difference between every adjacent pair of stars is identical.
+
+The main figure includes categories with at least **10 books**: `r nrow(eligible)` of the `r nrow(category_summary)` categories. The median category size is `r median(category_summary$number_of_books)` books, so 10 is a transparent size screen near that median. It reduces dependence on one or two listings but does not make a category representative, remove selection, or establish statistical significance.
+
+The comparison benchmarks are the averages over **all 1,000 book listings**, including listings in categories excluded from the figure:
+
+- Mean price: **£`r sprintf("%.2f", overall_avg_price)`**.
+- Mean displayed rating: **`r sprintf("%.3f", overall_avg_rating)` stars**.
+
+These are book-weighted benchmarks, not averages giving every category equal weight. A category passes the screen if its mean price is strictly below the first benchmark and its mean rating is strictly above the second. I avoid dividing stars by price because that would impose a particular tradeoff between money and a subjective rating scale.
+
+## Five categories pass, but the margins differ
+
+```{r}
+#| label: fig-value
+#| fig-cap: "Category means for groups with at least 10 listings. Point size represents listing count; dashed lines mark the full-catalogue mean price and rating. The upper-left region passes the screen. Source: supplied Books to Scrape snapshot; prices and ratings are synthetic."
+#| fig-alt: "Scatter plot of category mean price against mean rating. Humor, Historical Fiction, Sequential Art, Mystery, and Science fall above the rating benchmark and below the price benchmark."
+#| fig-width: 9
+#| fig-height: 6
+value_plot
+```
+
+The upper-left region contains cheaper-than-average, higher-rated category means. Membership in that region is a starting point for comparison, not a ranking of book quality.
+
+```{r}
+#| label: tbl-screen
+#| tbl-cap: "Categories passing the screen. Gaps are category means minus full-catalogue means; negative price gaps indicate lower listed prices."
+shown <- good_value_categories |>
+  dplyr::select(category, number_of_books, average_price, average_rating, price_gap, rating_gap)
+knitr::kable(shown, digits = c(0, 0, 2, 3, 2, 3),
+  col.names = c("Category", "Books", "Mean price (£)", "Mean stars", "Price gap (£)", "Rating gap"))
+```
+
+**Humor has the highest displayed mean rating among the five**, at 3.400 stars, with a mean price of £33.50. Its rating advantage over the catalogue is 0.477 stars, but it has only 10 listings. Historical Fiction combines a 3.231-star mean with a £33.64 mean price across 26 listings. Its larger listing count makes the result less dependent on any single book; it does not tell us how many people rated those books.
+
+**Mystery has the lowest mean price among the passing categories**, at £31.72, about £3.35 or 9.6% below the catalogue mean. Its rating advantage is only 0.0145 stars. Science passes by an even smaller margin, about 0.0056 stars, while Sequential Art exceeds the rating benchmark by about 0.0503 stars. These differences explain why a binary “passes” label can exaggerate how distinctive a category is. In particular, Science's mean rounds to the same two-decimal rating as the benchmark, even though it passes when calculated at full precision.
+
+A category mean also hides variation between titles. A cheaper category does not guarantee that a particular book is cheaper, and no category-level figure establishes which individual title a reader should buy.
+
+## Does the shortlist depend on the rule?
+
+I repeat the screen using minimum category sizes of 5, 10, and 20, holding the full-catalogue benchmarks fixed. This is a sensitivity check on the decision rule, not a hypothesis test.
+
+```{r}
+#| label: tbl-sensitivity
+#| tbl-cap: "Sensitivity to the minimum number of listings per category."
+knitr::kable(sensitivity, col.names = c("Minimum books", "Eligible categories", "Passing categories"))
+```
+
+At a minimum of 20 books, Historical Fiction, Mystery, and Sequential Art remain; Humor and Science are excluded because their groups are smaller. Exclusion is not evidence that their books are worse. It shows that the five-category headline depends partly on a chosen inclusion rule.
+
+As a second illustration, requiring a rating advantage of at least **0.10 stars**, while retaining the 10-book minimum and below-average price, leaves **Humor and Historical Fiction**. The 0.10 margin is an illustrative stricter screen, not an empirically established threshold for meaningful enjoyment. It reveals that the original five-category result includes several borderline cases.
+
+## Why higher ratings do not identify better books for everyone
+
+The central limitation of using real reviews would be **reader self-selection**. Readers choose genres rather than being randomly assigned to them. Someone who already enjoys humor may be especially likely to choose a humor book and evaluate it favorably. The people who read Mystery may have different expectations or use the star scale more strictly. A higher category average could therefore reflect who chose the books, rather than superior quality or a benefit that a new reader would experience.
+
+There is a second selection step: after reading, people choose whether to post a review. Enthusiastic fans or strongly disappointed readers may be more likely to respond. Thus, observed ratings would describe selected reviewers of selected books, not a common population evaluating every category under comparable conditions.
+
+These data contain neither reader identities nor reviewer counts, preferences, or purchase histories. The 10-book screen addresses the number of listings, **not** the number or comparability of reviewers. Neither a larger category nor a price control would resolve this problem. To study it with real data, a useful next step would be to compare ratings from the same readers across genres while accounting for prior preferences and review participation. Even that comparison could retain selection in which books each person chooses; randomized book assignment would provide stronger causal evidence.
+
+For this particular website, selection is a lesson about applying the method to genuine reviews, **not an explanation for the observed Humor result**: these displayed ratings were randomly assigned. The observed category differences may simply arise from that assignment and catalogue composition. They cannot identify a causal genre effect or real consumer satisfaction.
+
+## An actionable use: reduce search effort, then verify fit
+
+The supported recommendation is to use this workflow as a **shortlist tool**. In this demo, a rating-focused screen starts with Humor and Historical Fiction; a price-focused screen among the five passing groups starts with Mystery, while acknowledging that its rating advantage is negligible. None of these is a real purchase endorsement.
+
+For an actual purchase, a reader should first choose categories they already want to read, then apply a personal price ceiling to individual books. Within that feasible set, inspect the review count and recent substantive reviews, and read a sample before buying. A reader with a £20 budget should not treat Mystery's £31.72 category mean as evidence that a particular title is affordable. Personal fit and the actual listed price determine the final choice.
+
+A bookstore applying the method should present an optional “lower price / higher displayed rating” filter within a reader's chosen genre, show the underlying counts and individual prices, and avoid a universal “best genre” badge. Before adopting it commercially, the store could test whether the filter improves users' ability to find books within budget and their reported satisfaction. Those outcomes require new data; this exercise does not establish them.
+
+## Conclusion
+
+Five categories satisfy the original descriptive screen in this synthetic catalogue, but passing the same rule does not mean offering the same advantage: Humor and Historical Fiction have larger rating margins, while Mystery primarily stands out on price. The sensitivity checks show how a simple label depends on both sample-size and margin choices.
+
+The deeper lesson is that **a rating is a signal whose meaning depends on how it was generated and who supplied it**. Here, random assignment prevents a real quality interpretation; with genuine reviews, reader selection would still prevent treating category means as universal enjoyment or causal effects. A useful recommendation therefore combines transparent screening with individual budget and preference checks, using the evidence to narrow a decision without claiming that it can make the decision for every reader.
+
+## Reproduce this post
+
+The accompanying README explains the folder structure and commands. `code/02-analysis.R` reads the saved cleaned CSV, creates both summary tables and sensitivity checks, and saves the figure. Rendering this QMD runs that script and inserts the results directly, so the displayed tables and benchmarks are generated from data rather than copied manually. The separate rvest scraper is optional and is not run while rendering.
